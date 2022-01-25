@@ -1,0 +1,409 @@
+
+from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, session, make_response, jsonify
+from flask_login import login_required, current_user
+from Helpers.helper_functions import makepdf, is_date# , get_pdf_and_sf
+import pickle
+from Helpers.user_system import db
+from .SmartForm import SmartForm
+from .PDF import PDF
+
+generator_blueprint = Blueprint("generator", __name__, static_folder="static", template_folder="templates")
+
+@generator_blueprint.route("/initial_form", methods=["POST", "GET"])
+@login_required
+def initial_form():
+    
+    if request.method == "POST":
+
+        smartform_name = request.form["name"]
+        session["smartform-name"] = smartform_name
+
+        sf = SmartForm()
+        pdf = PDF()
+
+        sf_pickled = pickle.dumps(sf)
+        pdf_pickled = pickle.dumps(pdf)
+
+        smartform = SmartForm.query.filter_by(title=smartform_name, user=current_user.id).first()
+
+        if smartform:
+            flash("Error: SmartForm with that name already exists.")
+            return redirect(url_for("generator.initial_form"))
+
+        else: 
+            new_smartform = SmartForm(smartform=sf_pickled, user=current_user.id, title=smartform_name)
+            new_pdf = PDF(pdf=pdf_pickled, user=current_user.id, title=smartform_name, content="")
+            db.session.add(new_smartform)
+            db.session.add(new_pdf)
+            db.session.commit()
+
+        return redirect(url_for("generator.generator"))
+
+    return render_template("initial_form.html")
+
+@generator_blueprint.route("/generator", methods=["POST", "GET"])
+@login_required
+def generator():
+    
+    smartform_name = session["smartform-name"]
+    sf = SmartForm()
+    pdf = PDF()
+        
+    sf = SmartForm.query.filter_by(title=smartform_name, user=current_user.id).first()
+    pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+
+    print(sf.user, pdf.user)
+        
+    if request.method == "POST":
+        
+        if request.form["action"] == "short-question":
+
+            question = request.form["short-question"]
+            sf.add_short_question_input(question)
+            pdf.add_text_answer_holder()
+            db.session.add(sf)
+            db.session.add(pdf)
+            db.session.commit()
+            
+
+        if request.form["action"] == "long-question":
+
+            question = request.form["long-question"]
+            sf.add_long_question_input(question)
+            pdf.add_text_answer_holder()
+            db.session.add(sf)
+            db.session.add(pdf)
+            db.session.commit()
+
+        elif request.form["action"] == "date-question":
+
+            question = request.form["date-question"]
+            sf.add_date_input(question)
+            pdf.add_date_holder()
+            db.session.add(sf)
+            db.session.add(pdf)
+            db.session.commit()
+
+        # elif request.form["action"] == "CheckBox Question":
+
+        #     question = request.form["question-text"]
+        #     text_on = request.form["text-on"]
+        #     text_off = request.form["text-off"]
+        #     pdf.add_boolean_text(text_on, text_off)
+        #     pdf.add_checkbox_holder()
+        #     sql_session.add(pdf)
+        #     sf.add_boolean_input(question)
+        #     sql_session.add(sf)
+        #     sql_session.commit()
+
+        elif request.form["action"] == "pdf-text":
+
+            content = request.form["pdf-text"]
+            pdf.add_text(content)
+            db.session.add(pdf)
+            db.session.commit()
+
+        elif request.form["action"] == "clear-all":
+            pdf.clear_content()
+            sf.clear_content()
+            
+            sf_pickled = pickle.dumps(sf)
+            new_smartform = SmartForm(smartform=sf_pickled, user=current_user.id, title=smartform_name)
+            
+            pdf_pickled = pickle.dumps(pdf)
+            new_pdf = PDF(pdf=pdf_pickled, content=pdf.content, title=smartform_name)
+
+            db.session.add(new_smartform)
+            db.session.add(new_pdf)
+            db.session.commit()
+
+        elif request.form["action"] == "generate-smartform":
+
+            sf_pickled = pickle.dumps(sf)
+            new_smartform = SmartForm(smartform=sf_pickled, user=current_user.id, title=smartform_name)
+
+            pdf_pickled = pickle.dumps(pdf)
+            new_pdf = PDF(pdf=pdf_pickled, content=pdf.content, title=smartform_name)
+
+            db.session.add(new_smartform)
+            db.session.add(new_pdf)
+            db.session.commit()
+
+            flash("SmartForm successfully created!")
+            return redirect(url_for("generator.my_smartforms"))
+
+        return render_template("generator.html", smartform_title=smartform_name, sf_content=Markup(sf.content), pdf_content=Markup(pdf.content))
+    
+    return render_template("generator.html", smartform_title=smartform_name, sf_content=Markup(sf.content), pdf_content=Markup(pdf.content))
+
+@generator_blueprint.route("/my_smartforms", methods=["POST", "GET"])
+@login_required
+def my_smartforms():
+    
+    if request.method == "POST":
+
+        smartform_name = request.form["smartform-name"]
+
+        sf = SmartForm.query.filter_by(title=smartform_name, user=current_user.id).first()
+        pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+        
+        session["pdf-content"] = pdf.content
+        session["pdf-title"] = pdf.title
+        session["sf-content"] = sf.content
+        session["sf-title"] = sf.title
+
+
+        return redirect(url_for("generator.sf_form"))
+
+    return render_template("my_smartforms.html")
+
+@generator_blueprint.route("/sf_form", methods=["POST", "GET"])
+@login_required
+def sf_form():
+
+    if request.method == "POST":
+
+        sf = SmartForm()
+        pdf = PDF()
+        sql_session = Session()
+        smartform_title = session["sf-title"]
+        sf, pdf = get_pdf_and_sf(smartform_title, sql_session, sf, pdf)
+
+        form_data = list(request.form.values())
+        form_data.remove("Generate PDF")
+
+        form_dates = []
+        # split form data into dates and other
+        for i in form_data:
+            if is_date(i):
+                form_dates.append(i)
+                form_data.remove(i)
+
+        content = pdf.content
+
+        # replacing all the short question answers
+        count = 0
+        while count <= len(form_data) - 1:
+
+            content = content.replace(" <div id='text-question-answer' style='color: #808080; display: inline;'><i>->text question answer<-</i></div> ", form_data[count], 1)
+            count += 1
+
+        # replacing all the date questions
+        count = 0
+        while count <= len(form_dates) - 1:
+
+            content = content.replace(" <div id='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> ", form_dates[count], 1)
+            count += 1
+            
+        rendered = render_template(f"pdf_formed.html", title=Markup(session["pdf-title"]), content=Markup(content))
+        
+        pdf = makepdf(rendered)
+        response = make_response(pdf)
+        response.headers["Content-Type"] = "flask_application/pdf"
+        response.headers["Content-Disposition"] = f"attachment; filename={smartform_title}.pdf"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+
+        return response
+
+    return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
+
+from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, session, make_response, jsonify
+from flask_login import login_required, current_user
+from Helpers.base import Session, engine, Base
+from Helpers.helper_functions import get_pdf_and_sf, makepdf, is_date
+import pickle
+from Helpers.user_system import SmartformsDatabase, db
+from .SmartForm import SmartForm
+from .PDF import PDF
+
+generator_blueprint = Blueprint("generator", __name__, static_folder="static", template_folder="templates")
+
+Base.metadata.create_all(engine)
+
+sql_session = Session()
+
+@generator_blueprint.route("/initial_form", methods=["POST", "GET"])
+@login_required
+def initial_form():
+
+    sf = SmartForm()
+    pdf = PDF()
+    
+    if request.method == "POST":
+
+        smartform_name = request.form["name"]
+        session["smartform-name"] = smartform_name
+
+        sf.set_SmartForm_title(smartform_name)
+        pdf.set_title(smartform_name)
+
+        sf_pickled = pickle.dumps(sf)
+
+        smartform = SmartformsDatabase.query.filter_by(title=smartform_name, user=current_user.id).first()
+
+        if smartform:
+            flash("Error: SmartForm with that name already exists.")
+            return redirect(url_for("generator.initial_form"))
+
+        else: 
+            new_smartform = SmartformsDatabase(smartform=sf_pickled, user=current_user.id, title=smartform_name)
+            db.session.add(new_smartform)
+            db.session.commit()
+
+        return redirect(url_for("generator.generator"))
+
+    return render_template("initial_form.html")
+
+@generator_blueprint.route("/generator", methods=["POST", "GET"])
+@login_required
+def generator():
+    
+    smartform_name = session["smartform-name"]
+    sf = SmartForm()
+    pdf = PDF()
+    
+    sql_session = Session()
+    
+    sf, pdf = get_pdf_and_sf(smartform_name, sql_session, sf, pdf)
+        
+    if request.method == "POST":
+        
+        if request.form["action"] == "short-question":
+
+            question = request.form["short-question"]
+            sf.add_short_question_input(question)
+            pdf.add_text_answer_holder()
+            sql_session.add(pdf)
+            sql_session.add(sf)
+            sql_session.commit()
+
+        if request.form["action"] == "long-question":
+
+            question = request.form["long-question"]
+            sf.add_long_question_input(question)
+            pdf.add_text_answer_holder()
+            sql_session.add(pdf)
+            sql_session.add(sf)
+            sql_session.commit()
+
+        elif request.form["action"] == "date-question":
+
+            question = request.form["date-question"]
+            sf.add_date_input(question)
+            pdf.add_date_holder()
+            sql_session.add(pdf)
+            sql_session.add(sf)
+            sql_session.commit()
+
+        elif request.form["action"] == "CheckBox Question":
+
+            question = request.form["question-text"]
+            text_on = request.form["text-on"]
+            text_off = request.form["text-off"]
+            pdf.add_boolean_text(text_on, text_off)
+            pdf.add_checkbox_holder()
+            sql_session.add(pdf)
+            sf.add_boolean_input(question)
+            sql_session.add(sf)
+            sql_session.commit()
+
+        elif request.form["action"] == "pdf-text":
+
+            content = request.form["pdf-text"]
+            pdf.add_text(content)
+            sql_session.add(pdf)
+            sql_session.commit()
+
+        elif request.form["action"] == "clear-all":
+            pdf.clear_content()
+            sf.clear_content()
+            sql_session.add(sf)
+            sql_session.add(pdf)
+            sql_session.commit()
+
+        elif request.form["action"] == "generate-smartform":
+            sql_session.add(sf)
+            sql_session.add(pdf)
+            sql_session.commit()
+            sql_session.close()
+
+            flash("SmartForm successfully created!")
+            return redirect(url_for("generator.my_smartforms"))
+
+        return render_template("generator.html", smartform_title=smartform_name, sf_content=Markup(sf.content), pdf_content=Markup(pdf.content))
+    
+    return render_template("generator.html", smartform_title=smartform_name, sf_content=Markup(sf.content), pdf_content=Markup(pdf.content))
+
+@generator_blueprint.route("/my_smartforms", methods=["POST", "GET"])
+@login_required
+def my_smartforms():
+    
+    if request.method == "POST":
+
+        smartform_name = request.form["smartform-name"]
+        sf = SmartForm()
+        pdf = PDF()
+        sql_session = Session()
+
+        sf, pdf = get_pdf_and_sf(smartform_name, sql_session, sf, pdf)
+        
+        session["pdf-content"] = pdf.content
+        session["pdf-title"] = pdf.title
+        session["sf-content"] = sf.content
+        session["sf-title"] = sf.title
+
+        sql_session.close()
+
+        return redirect(url_for("generator.sf_form"))
+
+    return render_template("my_smartforms.html")
+
+@generator_blueprint.route("/sf_form", methods=["POST", "GET"])
+@login_required
+def sf_form():
+
+    if request.method == "POST":
+
+        sf = SmartForm()
+        pdf = PDF()
+        sql_session = Session()
+        smartform_title = session["sf-title"]
+        sf, pdf = get_pdf_and_sf(smartform_title, sql_session, sf, pdf)
+
+        form_data = list(request.form.values())
+        form_data.remove("Generate PDF")
+
+        form_dates = []
+        # split form data into dates and other
+        for i in form_data:
+            if is_date(i):
+                form_dates.append(i)
+                form_data.remove(i)
+
+        content = pdf.content
+
+        # replacing all the short question answers
+        count = 0
+        while count <= len(form_data) - 1:
+
+            content = content.replace(" <div id='text-question-answer' style='color: #808080; display: inline;'><i>->text question answer<-</i></div> ", form_data[count], 1)
+            count += 1
+
+        # replacing all the date questions
+        count = 0
+        while count <= len(form_dates) - 1:
+
+            content = content.replace(" <div id='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> ", form_dates[count], 1)
+            count += 1
+            
+        rendered = render_template(f"pdf_formed.html", title=Markup(session["pdf-title"]), content=Markup(content))
+        
+        pdf = makepdf(rendered)
+        response = make_response(pdf)
+        response.headers["Content-Type"] = "flask_application/pdf"
+        response.headers["Content-Disposition"] = f"attachment; filename={smartform_title}.pdf"
+        response.headers["X-Frame-Options"] = 'SAMEORIGIN'
+
+        return response
+
+    return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
