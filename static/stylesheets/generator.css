@@ -20,7 +20,7 @@ html, body {
     width: 100%;
 }
 
-.table-generated {
+/* .table-generated {
     position: absolute;
     top: 150px;
     border: 2px solid black;
@@ -33,7 +33,7 @@ html, body {
 
 .table-generated th {
     font-weight: normal;
-}
+} */
 
 #navbar {
     display: inline-flex;
