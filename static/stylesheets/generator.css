@@ -1,0 +1,203 @@
+html, body {
+    font-family: sans-serif;
+    height: 90%;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+}
+
+.other-nav {
+    font-size: 20px;
+    color: white;
+}
+
+.other-nav:hover {
+    font-weight: bold;
+}
+
+.container {
+    width: 100%;
+}
+
+#navbar {
+    display: inline-flex;
+    background-color: #05445E;
+    width: 100%;
+    align-items: center;
+}
+
+#navbar li {
+    display: inline;
+    padding: 20px;
+}
+
+#code-symbol {
+    letter-spacing: 3px;
+}
+
+#logo-nav {
+    color: white;
+    border-right: 2px dotted black;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#element-bar {
+    position: absolute;
+    top: 112.4px;
+    width: 265.5px;
+    height: 90%;
+    background-color: white;
+}
+
+#element-bar button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    text-align: center;
+    background-color: #02222f;
+    color: white;
+    font-size: 20px;
+}
+
+#element-bar button:hover {
+    background-color: orange;
+    font-weight: bold;
+}
+
+#form-pdf-heading {
+    position: absolute;
+    display: inline-flex;
+    background-color: #02222f;
+    height: 37px;
+    left: 265.5px;
+    right: 0;
+    z-index: 100;
+    color: white;
+    align-items: center;
+}
+
+#heading-pdf {
+    display: inline;
+    position: absolute;
+    left: 70%;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+}
+
+#heading-sf {
+    display: inline;
+    position: absolute;
+    left: 17.5%;
+    font-size: 20px;
+    text-align: center;
+    color: white;
+}
+
+#pdf-form-container {
+    position: absolute;
+    left: 265.5px;
+    right: 0;
+    top: 112.4px;
+    bottom: 0;
+}
+
+#form {
+    position: absolute;
+    border: 2px solid #02222f;
+    top: 0;
+    width: 50%;
+    bottom: 0;
+    background-color: lightgrey;
+}
+
+#pdf {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    right: 0;
+    border: 2px solid #02222f;
+    bottom: 0;
+    background-color: white;
+}
+
+/* #footer {
+    position: absolute;
+    bottom: 0;    
+    width: 100%;
+    height: 25%;
+    background-color: orange;
+    z-index: 50;
+} */
+
+#form-elements {
+    display: none;
+}
+
+#pdf-elements {
+    display: none;
+}
+
+#form-elements input {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    background-color: #05445E;
+    color: white;
+    width: 100%;
+    font-size: 18px;
+}
+
+#pdf-elements input {
+    display: block;
+    padding: 10px;
+    text-align: center;
+    background-color: #05445E;
+    color: white;
+    width: 100%;
+    font-size: 18px;
+}
+
+#smartform-title {
+    position: relative;
+    left: 10%;
+    top: 5%;
+    border: 2px dashed white;
+    width: 50%;
+    height: 5%;
+    font-size: 20px;
+    background-color: lightgrey;
+}
+
+#sf-content-container {
+    position: relative;
+    left: 0;
+    top: 5%;
+    text-align: left;
+}
+
+#sf-content-container h1, h3 {
+    position: relative;
+    left: 10%;   
+}
+
+#sf-content-container h1 {
+    color: #05445E;
+}
+
+#pdf-content-container {
+    position: absolute;
+    left: 48px;
+    right: 48px;
+    top: 48px;
+    bottom: 48px;
+}
+
+#table-submit {
+    left: 46.5%;
+}
+
+  
+  

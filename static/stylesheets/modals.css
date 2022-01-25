@@ -1,0 +1,294 @@
+.modal-heading {
+    color: #05445E;
+    text-align: center;
+}
+
+.modal-input {
+    display: block;
+    margin: 0 auto;
+    width: 80%;
+    height: 30px;
+    font-size: 18px;
+    border: 2px solid rgb(247, 243, 243);
+    border-radius: 10px;
+    margin-bottom: 60px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.table-modal-input {
+    display: inline;
+    margin: 0 auto;
+    margin-inline: 10px;
+    margin-bottom: 10px;
+    width: 30%;
+    height: 25px;
+    font-size: 18px;
+    border: 2px solid rgb(247, 243, 243);
+    border-radius: 10px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.modal-buttons {
+    position: absolute;
+    bottom: 7%;
+    right: 43.5%;
+    width: 100px;
+    height: 45px;
+    font-size: 18px;
+    background-color: #02222f;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.modal-buttons:hover {
+    background-color: orange;
+    font-weight: bold;
+}
+
+#form-question-modal-exit {
+    position: absolute;
+    right: 3%;
+    top: 7%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#form-question-modal-container {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#form-question-modal {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+}
+
+#long-question-modal-exit {
+    position: absolute;
+    right: 3%;
+    top: 7%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#long-question-modal-container {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#long-question-modal {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+}
+
+#date-question-modal-exit {
+    position: absolute;
+    right: 3%;
+    top: 7%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#date-question-modal-container {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#date-question-modal {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+}
+
+#address-question-modal-exit {
+    position: absolute;
+    right: 3%;
+    top: 7%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#address-question-modal-container {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#address-question-modal {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+}
+
+#pdf-text-modal-exit {
+    position: absolute;
+    right: 2%;
+    top: 2%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#pdf-text-modal-container {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#pdf-text-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 10%;
+    right: 10%;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+    text-align: center;
+}
+
+#mce-text-area-div {
+    position: absolute;
+    bottom: 15%;
+    top: 10%;
+    left: 30px;
+    right: 30px;
+}
+
+/* #mce-text-area-div p {
+    display: inline;
+} */
+
+#pdf-text-button {
+    display: block;
+    height: 40px;
+}
+
+#list-question-modal-exit {
+    position: absolute;
+    right: 3%;
+    top: 7%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#list-question-modal-container {
+    display: none;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#list-question-modal {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 25%;
+    right: 25%;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+}
+
+#table-configure-modal-exit {
+    position: fixed;
+    right: 3%;
+    top: 15%;
+    font-weight: bold;
+    background-color: white;
+    border: white;
+    font-size: 20px;
+    color: #02222f;
+    cursor: pointer;
+}
+
+#table-configure-modal-container {
+    display: block;
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.6);
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+#table-configure-modal {
+    display: block;
+    position: fixed;
+    border: 2px solid #02222f;
+    border-radius: 15px 50px;
+    background-color: white;
+    opacity: 1;
+}
