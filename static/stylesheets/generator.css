@@ -20,6 +20,21 @@ html, body {
     width: 100%;
 }
 
+.table-generated {
+    position: absolute;
+    top: 150px;
+    border: 2px solid black;
+}
+
+.table-generated td {
+    padding: 15px;
+    border: 2px solid black;
+}
+
+.table-generated th {
+    font-weight: normal;
+}
+
 #navbar {
     display: inline-flex;
     background-color: #05445E;
@@ -197,6 +212,10 @@ html, body {
 
 #table-submit {
     left: 46.5%;
+}
+
+#table-output {
+    display: block;
 }
 
   

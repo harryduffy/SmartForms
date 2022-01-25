@@ -145,29 +145,7 @@ window.onload = function() {
 
     ///////////////////////////// table configure 1/////////////////////////////
 
-    // function tableConfigure() {
-
-    //     const tableConfigure = document.getElementById('table-configure-modal');
-    //     const modalContainer = document.getElementById('table-configure-modal-container');
-
-    //     if (modalContainer.style.display === 'block') {
-    //         tableConfigure.style.display = 'none';
-    //         modalContainer.style.display = 'none';
-    //     } else {
-    //         modalContainer.style.display = 'block';
-    //         tableConfigure.style.display = 'block';
-    //         tableConfigure.style.zIndex = 10003;
-    //     }
-    // }
-    
-    // const tableConfigureModalExit = document.getElementById('table-configure-modal-exit');
-    // const tableConfigureVar = document.getElementById('table-question');
-    // tableConfigureVar.onclick = tableConfigure;
-    // tableConfigureModalExit.onclick = tableConfigure;
-
-    ///////////////////////////// table configure 2 /////////////////////////////
-
-    function generate() {
+    function tableConfigure() {
 
         const tableConfigure = document.getElementById('table-configure-modal');
         const modalContainer = document.getElementById('table-configure-modal-container');
@@ -180,45 +158,51 @@ window.onload = function() {
             tableConfigure.style.display = 'block';
             tableConfigure.style.zIndex = 10003;
         }
-
-        let tableHTML = ''
-        const rowsNumber = parseInt(document.getElementById("table-rows").value) + 1;
-        const columnsNumber = parseInt(document.getElementById("table-cols").value) + 1;
-        const tableConfigure = document.getElementById('table-configure-modal');
-        tableConfigure.style.backgroundColor = 'black';
-    
-        // for (let i = 1; i <= rowsNumber; i++) {
-        // let tr = '<tr>'
-        // let td = ''
-    
-        //     for (let j = 1; j <= columnsNumber; j++) {
-        //         const cellContent = i * j
-        
-        //         if (i === 1 || j === 1) {
-        //         td = `<th>${cellContent}</th>`;
-        //         }
-        //         else {
-        //         td = `<td>${cellContent}</td>`;
-        //         }
-        
-        //         tr += td
-        //     }
-    
-        // tr += '</tr>'
-        // tableHTML += tr
-        // }
-
-        // console.log()
-        
-        // this.tableObj.innerHTML = tableHTML
     }
-
-    const tableConfigureModalExit = document.getElementById('table-configure-modal-exit');
-    const tableConfigureVar = document.getElementById('table-question');
+    
+    let tableConfigureModalExit = document.getElementById('table-configure-modal-exit');
+    let tableConfigureVar = document.getElementById('table-question');
     tableConfigureVar.onclick = tableConfigure;
     tableConfigureModalExit.onclick = tableConfigure;
 
-    const generateButton = document.getElementById('generate-table');
-    generateButton.onclick = generate;
+    ///////////////////////////// table configure 2 /////////////////////////////
+
+    function generate() {
+
+        let tableHTML = ''
+        const rowsNumber = parseInt(document.getElementById("table-rows").value);
+        const columnsNumber = parseInt(document.getElementById("table-cols").value);
+    
+        for (let i = 1; i <= rowsNumber; i++) {
+        let tr = '<tr>'
+        let td = ''
+    
+            for (let j = 1; j <= columnsNumber; j++) {
+                const cellContent = 'banana';
+        
+                if (i === 1 || j === 1) {
+                td = `<th >${cellContent}</th>`;
+                }
+                else {
+                td = `<td>${cellContent}</td>`;
+                }
+        
+                tr += td
+            }
+    
+        tr += '</tr>'
+        tableHTML += tr
+        
+    }
+
+        
+        const generateButton = document.getElementById('generate-table');
+        generateButton.style.display = 'none';
+        const tableObj = document.getElementById('table-output');
+        tableObj.innerHTML = tableHTML
+    }
+
+    let generateButton = document.getElementById('generate-table');
+    generateButton.onmouseover = generate;
 
 }

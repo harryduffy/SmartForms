@@ -276,7 +276,7 @@
 }
 
 #table-configure-modal-container {
-    display: block;
+    display: none;
     position: fixed;
     background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
@@ -285,10 +285,11 @@
 }
 
 #table-configure-modal {
-    display: block;
+    display: none;
     position: fixed;
     border: 2px solid #02222f;
     border-radius: 15px 50px;
     background-color: white;
     opacity: 1;
+    overflow-y: scroll;
 }

@@ -90,9 +90,11 @@
                         <input type="number" name="table-cols" id="table-cols" class="table-modal-input" placeholder="Enter # of cols"/>
                         <br>
                         <div style="display: block; position: absolute; top: 150px;">
-                            <button onclick="generate()" id="generate-table">Create table</button>
+                            <button onmouseover="generate()" id="generate-table">Create table</button>
                         </div>
-                        <table id="table-output" cellpadding="" cellspacing=""></table>
+                        <div class="table-generated">
+                            <table id="table-output"></table>
+                        </div>
                     </div>
                     <br>
                     <!-- <button type="submit" name="action" value="table-question" id="table-submit" class="modal-buttons">Submit</button> -->
