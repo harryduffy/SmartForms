@@ -178,13 +178,12 @@ window.onload = function() {
         let td = ''
     
             for (let j = 1; j <= columnsNumber; j++) {
-                const cellContent = 'banana';
         
                 if (i === 1 || j === 1) {
-                td = `<th >${cellContent}</th>`;
+                td = `<th><input type="text" placeholder="banana"/></th>`;
                 }
                 else {
-                td = `<td>${cellContent}</td>`;
+                td = `<td><input type="text" placeholder="banana"/></td>`;
                 }
         
                 tr += td
@@ -195,7 +194,6 @@ window.onload = function() {
         
     }
 
-        
         const generateButton = document.getElementById('generate-table');
         generateButton.style.display = 'none';
         const tableObj = document.getElementById('table-output');
