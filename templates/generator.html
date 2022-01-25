@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<head>
+    <script src="https://cdn.tiny.cloud/1/r56admlgsenzffrllppnsqtewn0etbdy2rm22a8bsn8ikm5l/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+          selector: '#mce-text-area',
+          plugins: 'wordcount toc spellchecker preview lists advlist link image imagetools autolink charmap hr table pagebreak',
+          toolbar: 'undo redo styleselect bold italic alignleft aligncenter alignright alignjustify outdent indent numlist bullist charmap hr table wordcount toc preview pagebreak',
+          menubar: 'table view tools insert format',
+          default_link_target: '_blank',
+          spellchecker_languages: 'English=en',
+          height: '100%',
+          resize: false,
+          forced_root_block: false,
+          content_style: 'body {font-family: sans-serif;}'
+        });
+    </script>
+    <link rel="stylesheet" href="../static/stylesheets/base.css">
+    <link rel="stylesheet" href="../static/stylesheets/modals.css">
+    <link rel="stylesheet" href="../static/stylesheets/generator.css">
+</head>
+<body onload="init()">
+    <script type="text/javascript" src="../static/generator.js"></script>
+    <nav id="navbar">
+        <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a href="/">Home</a></li><li class="other-nav"><a href="{{url_for('generator.my_smartforms')}}">My SmartForms</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li>
+    </nav>
+
+    <nav id="element-bar">
+        <button onclick="dropdownForm()" id="form-dropdown" class="hover-buttons">Form Elements</button>
+        <div id="form-elements">
+            <button id="short-question" onclick="shortQuestionModal()" type="button">Single Line Question</button>
+            <button id="list-question" onclick="listQuestionModal()" type="button">List Question</button>
+            <button id="long-question" onclick="longQuestionModal()" type="button">Multiline Question</button>
+            <button id="table-question" onclick="tableConfigure()" type="button">Table Question</button>
+            <button id="date-question" onclick="dateModal()" type="button">Date Question</button>
+            <button id="address-question" onclick="addressModal()" type="button">Address Question</button>
+            <button type="button">Checkbox Question</button>
+        </div>
+        <button onclick="dropdownPDF()" id="pdf-dropdown" class="hover-buttons">PDF Elements</button>
+        <div id="pdf-elements">
+            <button id="pdf-text" type="button">PDF Editor</button>
+        </div>
+        <form action="#" method="POST">
+            <input type="hidden" name="csrf_token" id="generator-csrf-top" value="{{ csrf_token() }}"/>
+            <button type="submit" name="action" value="clear-all" class="hover-buttons">Clear All</button>
+            <button type="submit" name="action" value="generate-smartform" class="hover-buttons">Generate SmartForm</button>
+        </form>
+    </nav>
+
+    <div class="container">
+        <div id="form-question-modal-container">
+            <div id="form-question-modal" style="height: 35%;">
+                <button onclick="questionModal()" type="button" id="form-question-modal-exit">X</button>
+                <h1 class="modal-heading">Short Question Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf-1" value="{{ csrf_token() }}"/>
+                    <input type="text" name="short-question" class="modal-input" placeholder="Enter a question..."/>
+                    <div class="inline-radios">
+                        <label for="radio-yes">Inline</label>
+                        <input type="radio" name="inline" class="radio" id="radio-yes" value="inline" class="modal-input"/>
+                        <label for="radio-yes">Line Break</label>
+                        <input type="radio" name="inline" class="radio" id="radio-no" value="line-break" class="modal-input"/>
+                    </div>
+                    <br>
+                    <button type="submit" name="action" value="short-question" class="modal-buttons">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="long-question-modal-container">
+            <div id="long-question-modal">
+                <button onclick="longQuestionModal()" type="button" id="long-question-modal-exit">X</button>
+                <h1 class="modal-heading">Long Question Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf-2" value="{{ csrf_token() }}"/>
+                    <input type="text" name="long-question" class="modal-input" placeholder="Enter a question..."/>
+                    <button type="submit" name="action" value="long-question" class="modal-buttons">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="table-configure-modal-container">
+            <div id="table-configure-modal" style="height: 90%; width: 100%;">
+                <button onclick="tableConfigure()" type="button" id="table-configure-modal-exit">X</button>
+                <h1 class="modal-heading">Table Configure Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf" value="{{ csrf_token() }}"/>
+                    <div class="center">
+                        <input type="number" name="table-rows" id="table-rows" class="table-modal-input" placeholder="Enter # of rows"/>
+                        <input type="number" name="table-cols" id="table-cols" class="table-modal-input" placeholder="Enter # of cols"/>
+                        <br>
+                        <div style="display: block; position: absolute; top: 150px;">
+                            <button onclick="generate()" id="generate-table">Create table</button>
+                        </div>
+                        <table id="table-output" cellpadding="" cellspacing=""></table>
+                    </div>
+                    <br>
+                    <!-- <button type="submit" name="action" value="table-question" id="table-submit" class="modal-buttons">Submit</button> -->
+                </form>
+            </div>
+        </div>
+
+        <div id="list-question-modal-container">
+            <div id="list-question-modal" style="height: 45%;">
+                <button onclick="listQuestionModal()" type="button" id="list-question-modal-exit">X</button>
+                <h1 class="modal-heading">List Question Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf-1" value="{{ csrf_token() }}"/>
+                    <input type="text" name="list-question" class="modal-input" placeholder="Enter a question..."/>
+                    <input type="number" name="list-options-number" id="data-list-inputs" style="padding-bottom: 10px;" class="modal-input" placeholder="Enter # of options"/>
+                    <input type="text" name="list-options" id="data-list-options" style="padding-bottom: 5px;" class="modal-input" placeholder="Enter options (CSV)"/>
+                    <div class="inline-radios">
+                        <label for="radio-yes">Inline</label>
+                        <input type="radio" name="inline" class="radio" id="radio-yes" value="inline" class="modal-input"/>
+                        <label for="radio-yes">Line Break</label>
+                        <input type="radio" name="inline" class="radio" id="radio-no" value="line-break" class="modal-input"/>
+                    </div>
+                    <br>
+                    <button type="submit" name="action" value="list-question" class="modal-buttons">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="date-question-modal-container">
+            <div id="date-question-modal" style="height: 35%;">
+                <button onclick="dateModal()" type="button" id="date-question-modal-exit">X</button>
+                <h1 class="modal-heading">Date Question Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf-3" value="{{ csrf_token() }}"/>
+                    <input type="text" name="date-question" class="modal-input" placeholder="Enter a question...">
+                    <div class="inline-radios">
+                        <label for="inline-yes">Inline</label>
+                        <input type="radio" name="inline" class="radio" id="inline-yes" value="inline" class="modal-input"/>
+                        <label for="break-yes">Line Break</label>
+                        <input type="radio" name="inline" class="radio" id="break-no" value="line-break" class="modal-input"/>
+                    </div>
+                    <button type="submit" name="action" value="date-question" class="modal-buttons">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="address-question-modal-container">
+            <div id="address-question-modal" style="height: 35%;">
+                <button onclick="addressModal()" type="button" id="address-question-modal-exit">X</button>
+                <h1 class="modal-heading">Address Question Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf-4" value="{{ csrf_token() }}"/>
+                    <input type="text" name="address-question" class="modal-input" placeholder="Enter a question...">
+                    <div class="inline-radios">
+                        <label for="inline">Inline</label>
+                        <input type="radio" name="inline" class="radio" id="inline" value="inline" class="modal-input"/>
+                        <label for="break">Line Break</label>
+                        <input type="radio" name="inline" class="radio" id="break" value="line-break" class="modal-input"/>
+                    </div>
+                    <button type="submit" name="action" value="address-question" class="modal-buttons">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="pdf-text-modal-container">
+            <div id="pdf-text-modal">
+                <button onclick="pdfTextModal()" type="button" id="pdf-text-modal-exit">X</button>
+                <h1 class="modal-heading">PDF Text Modal</h1>
+                <form action="#" method="POST">
+                    <input type="hidden" name="csrf_token" id="generator-csrf-5" value="{{ csrf_token() }}"/>
+                    <div id="mce-text-area-div">
+                        <textarea id="mce-text-area" name="pdf-text"></textarea> 
+                    </div>
+                    <br>
+                    <button type="submit" id="pdf-text-button" name="action" value="pdf-text" class="modal-buttons">Submit</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="form-pdf-heading">
+            <h1 id="heading-sf">SmartForm</h1>
+            <h1 id="heading-pdf">PDF Output</h1>
+        </div>
+
+        <div id="pdf-form-container">
+            <div id="form">
+                <div id="sf-content-container">
+                    <h1>{{smartform_title}}</h1>
+                    {{sf_content}}
+                </div>
+            </div>
+            <div id="pdf">
+                <div id="pdf-content-container">
+                    {{pdf_content}}
+                </div>
+            </div>
+        </div>
+        
+
+        <div id="footer">
+
+        </div>
+    </div>
+</body>

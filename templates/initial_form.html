@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
+    </head>
+    <body>
+        <nav id="navbar">
+            <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a href="/">Home</a></li><li class="other-nav"><a href="{{url_for('generator.my_smartforms')}}">My SmartForms</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li>
+        </nav>
+        <div class="body-container">
+            <div style="text-align: center;">
+                <h1>
+                    SmartForm Generator
+                </h1>
+                <h3>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                        <h3 style="color: red">{{message}}</h3>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                </h3>
+            </div>
+            <br/>
+            <form action="#" method="POST">
+                <input type="hidden" name="csrf_token" id="initial-form-csrf" value="{{ csrf_token() }}"/>
+                <h2 style="text-align: center; padding-bottom: 30px;">Enter SmartForm Name</h2>
+                <div class="center">
+                    <input type="text" name="name" id="smartform-name-input" maxlength="250" placeholder="Enter SmartForm name...">
+                </div>
+                <br>
+                <br>
+                <div class="center">
+                    <button type="submit" value="Submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

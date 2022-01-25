@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../static/stylesheets/base.css">
+</head>
+<body>
+    <nav id="navbar">
+        <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li><li class="other-nav"><a href="{{url_for('arterial.login')}}"><button>Login</button></a></li>
+        
+        <span class="end-nav"><a href="{{url_for('arterial.register')}}"><button>Sign Up</button></a></span>
+    </nav>
+    <div class="center-form">
+        <form action="#" method="POST" style="width: 50%;">
+            {{ form.csrf_token }}
+            {{ form.hidden_tag() }}
+            {{ form.username }}
+            {{ form.password }}
+            {{ form.submit }}
+        </form>
+    </div>
+    <p style="text-align: center;">Don't have an account? <a href="{{url_for('arterial.register')}}">Sign up</a></p>
+    
+</body>
+</html>

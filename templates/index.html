@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
+        <title>Home Page</title>
+    </head>
+    <body>
+        <nav id="navbar">
+            <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li><li class="other-nav"><a href="{{url_for('arterial.login')}}"><button>Login</button></a></li>
+            
+            <span class="end-nav"><a href="{{url_for('arterial.register')}}"><button>Sign Up</button></a></span>
+        </nav>
+
+        <div id="cover-div" class="center">
+            <div style="display: inline; text-align: center;">
+                <h1 id="title">smartforms</h1>
+                <p id="title-subtext">
+                    The end of documents as we know it.
+                    <br>
+                    <br>
+                    A powerful document factory and database for generating and distributing your repeatable documents.
+                </p>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div id="middle-div">
+            <div class="image-text center">
+                <div style="width: 50%; margin-left: 50px;">
+                    <img src="https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image-300x225.png" alt="placeholder image">
+                </div>
+                <div style="width: 50%; text-align: center; margin-right: 50px;">
+                    <h2>Document Factory</h2>
+                    <p>
+                        SmartForms are automated document factories, and are apart of a movement to place the creation of internet objects into the hands of the user. 
+                        <br>
+                        <br>
+                        SmartForms allow individuals and businesses to create their own document factories, and in doing so are able to create and distribute mission-critical, high-volume documents.
+                    </p>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <div class="image-text center">
+                <div style="width: 50%; text-align: center; margin-left: 50px;">
+                    <h2>SmartForm Database</h2>
+                    <p>
+                        Once the SmartForms have been created, they are easily retrievable and reusable through the users account. This allows for the mass-creation and distribution of digital documents.
+                    </p>
+                </div>
+                <div style="width: 50%; margin-right: 50px;">
+                    <img src="https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image-300x225.png" alt="placeholder image">
+                </div>
+            </div>
+
+        </div>
+        <footer id="footer">
+
+        </footer>
+    </body>
+</html>

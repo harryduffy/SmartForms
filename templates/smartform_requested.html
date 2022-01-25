@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
+    </head>
+    <body>
+        <script type="text/javascript" src="../static/sentinel_replacers.js"></script>
+        <nav id="navbar">
+            <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a href="/">Home</a></li><li class="other-nav"><a href="/my_smartforms">My SmartForms</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li>
+        </nav>
+        <div class="body-container">
+            <h1 class="center"> {{ title }} </h1>
+            <form action="#" method="POST">
+                <input type="hidden" name="csrf_token" id="smartform-requested-csrf" value="{{ csrf_token() }}"/>
+                <div style="text-align: center;">
+                    {{ content }}
+                </div>
+                <div class="center top-padding">
+                    <button type="submit" id="generate-pdf" name="action" value="Generate PDF">Generate PDF</button>
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
