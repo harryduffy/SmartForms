@@ -142,9 +142,6 @@ window.onload = function() {
     pdfText.onclick = pdfTextModal;
     modalPDFExit.onclick = pdfTextModal;
 
-
-    ///////////////////////////// table configure 1/////////////////////////////
-
     function tableConfigure() {
 
         const tableConfigure = document.getElementById('table-configure-modal');
@@ -166,41 +163,5 @@ window.onload = function() {
     tableConfigureModalExit.onclick = tableConfigure;
 
     ///////////////////////////// table configure 2 /////////////////////////////
-
-    function generate() {
-
-        let tableHTML = ''
-        const rowsNumber = parseInt(document.getElementById("table-rows").value);
-        const columnsNumber = parseInt(document.getElementById("table-cols").value);
-    
-        for (let i = 1; i <= rowsNumber; i++) {
-        let tr = '<tr>'
-        let td = ''
-    
-            for (let j = 1; j <= columnsNumber; j++) {
-        
-                if (i === 1 || j === 1) {
-                td = `<th><input type="text" placeholder="banana"/></th>`;
-                }
-                else {
-                td = `<td><input type="text" placeholder="banana"/></td>`;
-                }
-        
-                tr += td
-            }
-    
-        tr += '</tr>'
-        tableHTML += tr
-        
-    }
-
-        const generateButton = document.getElementById('generate-table');
-        generateButton.style.display = 'none';
-        const tableObj = document.getElementById('table-output');
-        tableObj.innerHTML = tableHTML
-    }
-
-    let generateButton = document.getElementById('generate-table');
-    generateButton.onmouseover = generate;
 
 }

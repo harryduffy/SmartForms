@@ -30,7 +30,7 @@ class SmartForm(db.Model):
 
                 <div id="smartform-inputs-div-{self.question_count}">
                     <h3>{self.question_count}. {question}</h3>
-                    <input type="text" id="smartform-inputs" maxlength="250" name="inline-short-{self.question_count}" placeholder="Enter text...">
+                    <input type="text" id="smartform-inputs" maxlength="250" name="inline-text-{self.question_count}" placeholder="Enter text...">
                 </div>
             
             '''
@@ -39,7 +39,7 @@ class SmartForm(db.Model):
 
                 <div id="smartform-inputs-div-{self.question_count}">
                     <h3>{self.question_count}. {question}</h3>
-                    <input type="text" id="smartform-inputs" maxlength="250" name="break-short-{self.question_count}" placeholder="Enter text...">
+                    <input type="text" id="smartform-inputs" maxlength="250" name="break-text-{self.question_count}" placeholder="Enter text...">
                 </div>
             
             '''

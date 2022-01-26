@@ -1,0 +1,48 @@
+html {
+    height: 100%;
+    overflow: auto;
+}
+
+body {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: grey;
+}
+
+.container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.pdf-container {
+    background-color: white;
+    height: auto;
+    width: 795px;
+    margin: auto;
+    position: absolute;
+    top: 96px; left: 0; bottom: 96px; right: 0;
+    overflow-y: scroll;
+    border: 1px solid black;
+}
+
+.text-container {
+    padding: 96px;
+}
+
+.button-centering {
+    margin: 0;
+    position: absolute;
+    left: 50%;
+    bottom: -50px;
+    padding-bottom: 30px;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#submit-button {
+    font-size: 25px;
+    width: 120px;
+}

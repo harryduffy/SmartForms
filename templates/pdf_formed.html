@@ -2,10 +2,31 @@
     <head>
         <title> {{ title }} </title>
         <link type="text/css" rel="stylesheet" href="../static/stylesheets/base.css">
+        <link type="text/css" rel="stylesheet" href="../static/stylesheets/generator.css">
         <style>
+
+            body {
+                font-family: sans-serif;
+            }
+            
             th, tr, td{
-                border: 1px solid black;
                 text-align: center;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                /* border: 2px solid black; */
+            }
+
+            td, th {
+                border: 1px solid #dddddd;
+                padding: 15px;
+
+            }
+
+            tr:nth-child(even) {
+                background-color: #dddddd;
             }
             
         </style>

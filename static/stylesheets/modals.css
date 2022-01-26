@@ -11,7 +11,7 @@
     font-size: 18px;
     border: 2px solid rgb(247, 243, 243);
     border-radius: 10px;
-    margin-bottom: 60px;
+    margin-bottom: 30px;
     font-family: 'Courier New', Courier, monospace;
 }
 
@@ -20,7 +20,7 @@
     margin: 0 auto;
     margin-inline: 10px;
     margin-bottom: 10px;
-    width: 30%;
+    width: 40%;
     height: 25px;
     font-size: 18px;
     border: 2px solid rgb(247, 243, 243);
@@ -29,9 +29,10 @@
 }
 
 .modal-buttons {
-    position: absolute;
-    bottom: 7%;
-    right: 43.5%;
+    /* position: absolute;
+    bottom: 40px;*/
+    text-align: center;
+    /* margin-left: 43.5%;  */
     width: 100px;
     height: 45px;
     font-size: 18px;
@@ -44,6 +45,15 @@
 .modal-buttons:hover {
     background-color: orange;
     font-weight: bold;
+}
+
+.modal-buttons-container {
+    margin: 0;
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 #form-question-modal-exit {
@@ -262,11 +272,10 @@
     background-color: white;
     opacity: 1;
 }
-/* 
 #table-configure-modal-exit {
-    position: fixed;
+    position: absolute;
     right: 3%;
-    top: 15%;
+    top: 7%;
     font-weight: bold;
     background-color: white;
     border: white;
@@ -277,7 +286,7 @@
 
 #table-configure-modal-container {
     display: none;
-    position: fixed;
+    position: absolute;
     background-color: rgba(0, 0, 0, 0.6);
     width: 100%;
     height: 100%;
@@ -287,9 +296,11 @@
 #table-configure-modal {
     display: none;
     position: fixed;
+    top: 25%;
+    left: 25%;
+    right: 25%;
     border: 2px solid #02222f;
     border-radius: 15px 50px;
     background-color: white;
     opacity: 1;
-    overflow-y: scroll;
-} */
+}

@@ -1,5 +1,5 @@
-from sqlalchemy import orm
 from Helpers.user_system import db
+from Helpers.helper_functions import create_table
 
 class PDF(db.Model):
 
@@ -35,30 +35,36 @@ class PDF(db.Model):
     def add_text_answer_holder(self, inline):
 
         if inline:
-            self.content += " <div id='text-question-answer' style='color: #808080; display: inline;'><i>->text question answer<-</i></div> "
+            self.content += " <div class='text-question-answer' style='color: #808080; display: inline;'><i>->text answer<-</i></div> "
         else:
-            self.content += " <div id='text-question-answer' style='color: #808080; display: block;'><i>->text question answer<-</i></div> "
+            self.content += " <div class='text-question-answer' style='color: #808080; display: block;'><i>->text answer<-</i></div> "
 
     def add_list_answer_holder(self, inline):
 
         if inline:
-            self.content += " <div id='lists-question-answer' style='color: #808080; display: inline;'><i>->list answer<-</i></div> "
+            self.content += " <div class='list-question-answer' style='color: #808080; display: inline;'><i>->list answer<-</i></div> "
         else:
-            self.content += " <div id='lists-question-answer' style='color: #808080; display: block;'><i>->list answer<-</i></div> "
+            self.content += " <div class='list-question-answer' style='color: #808080; display: block;'><i>->list answer<-</i></div> "
 
     def add_date_holder(self, inline):
 
         if inline:
-            self.content += " <div id='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> "
+            self.content += " <div class='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> "
         else:
-            self.content += " <div id='date-question-answer' style='color: #808080; display: block;'><i>->date answer<-</i></div> "
+            self.content += " <div class='date-question-answer' style='color: #808080; display: block;'><i>->date answer<-</i></div> "
 
     def add_address_holder(self, inline):
 
         if inline:
-            self.content += " <div id='address-question-answer' style='color: #808080; display: inline;'><i>->address answer<-</i></div> "
+            self.content += " <div class='address-question-answer' style='color: #808080; display: inline;'><i>->address answer<-</i></div> "
         else:
-            self.content += " <div id='address-question-answer' style='color: #808080; display: block;'><i>->address answer<-</i></div> "
+            self.content += " <div class='address-question-answer' style='color: #808080; display: block;'><i>->address answer<-</i></div> "
+
+    def add_table_holder(self, rows, cols):
+
+        table = create_table(int(rows), int(cols))
+
+        self.content += table
 
     def add_checkbox_holder(self):
 

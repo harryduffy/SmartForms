@@ -1,6 +1,7 @@
+from venv import create
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, session, make_response
 from flask_login import login_required, current_user
-from Helpers.helper_functions import makepdf, is_date
+from Helpers.helper_functions import makepdf, is_date, create_table, replace_table, holder_replacer
 from Helpers.user_system import db, csrf
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
 from .SmartForm import SmartForm
@@ -48,8 +49,6 @@ def generator():
     pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
         
     if request.method == "POST":
-
-        print(request.form)
 
         try:
             action = request.form["action"]
@@ -100,7 +99,13 @@ def generator():
 
         elif action == "table-question":
 
-            print("here")
+            rows = request.form["table-rows"]
+            cols = request.form["table-cols"]
+
+            session["rows"] = rows
+            session["cols"] = cols
+
+            pdf.add_table_holder(rows, cols)
 
             db.session.add(sf)
             db.session.add(pdf)
@@ -218,8 +223,13 @@ def sf_form():
         else:
             raise CSRFTokenMissingException('The CSRF Token is missing.')
 
-        # split form data into dates, addresses etc
         form_dict = request.form.to_dict(flat=False)
+
+        content = pdf.content
+
+        content = holder_replacer(form_dict, content, "text")
+        content = holder_replacer(form_dict, content, "address")
+        content = holder_replacer(form_dict, content, "list")
 
         form_dates = []
         for i in form_data:
@@ -227,106 +237,43 @@ def sf_form():
                 form_dates.append(i)
                 form_data.remove(i)
 
-        form_short_inline = []
-        form_short_break = []
-        for i in form_dict:
-            j = form_dict[i]
-            try:
-                if i.split("-")[1] == "short":
-                    if i.split("-")[0] == "inline":
-                        form_short_inline.append(j[0])
-                    else:
-                        form_short_break.append(j[0])
-            except IndexError as e:
-                print("Error: " + str(e))
-
-        form_addresses_inline = []
-        form_addresses_break = []
-        for i in form_dict:
-            j = form_dict[i]
-            try:
-                if i.split("-")[1] == "address":
-                    if i.split("-")[0] == "inline":
-                        form_addresses_inline.append(j[0])
-                    else:
-                        form_addresses_break.append(j[0])
-            except IndexError as e:
-                print("Error: " + str(e))
-
-        form_lists_inline = []
-        form_lists_break = []
-        for i in form_dict:
-            j = form_dict[i]
-            try:
-                print(i.split("-"))
-                if i.split("-")[1] == "lists":
-                    if i.split("-")[0] == "inline":
-                        form_lists_inline.append(j[0])
-                    else:
-                        form_lists_break.append(j[0])
-            except IndexError as e:
-                print("Error: " + str(e))
-
-        print(form_lists_inline)
-        print(form_lists_break)
-
-        content = pdf.content
-
-        # replacing all the short question answers
-        count = 0
-        while count <= len(form_short_break) - 1:
-            
-            element = '<div style="display: block">' + form_short_break[count] + '</div>'
-            content = content.replace(" <div id='text-question-answer' style='color: #808080; display: block;'><i>->text question answer<-</i></div> ", element, 1)
-            count += 1
-
-        count = 0
-        while count <= len(form_short_inline) - 1:
-            
-            content = content.replace(" <div id='text-question-answer' style='color: #808080; display: inline;'><i>->text question answer<-</i></div> ", form_short_inline[count], 1)
-            count += 1
-
-        # # replacing all the date questions
         count = 0
         while count <= len(form_dates) - 1:
 
             content = content.replace(f" <div id='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> ", form_dates[count], 1)
             count += 1
 
-        # # replacing all the address questions
-        count = 0
-        while count <= len(form_addresses_inline) - 1:
-
-            content = content.replace(" <div id='address-question-answer' style='color: #808080; display: inline;'><i>->address answer<-</i></div> ", form_addresses_inline[count], 1)
-            count += 1
-
-        count = 0
-        while count <= len(form_addresses_break) - 1:
-
-            element = '<div style="display: block">' + form_addresses_break[count] + '</div>'
-            content = content.replace(" <div id='address-question-answer' style='color: #808080; display: block;'><i>->address answer<-</i></div> ", element, 1)
-            count += 1
-
-        count = 0
-        while count <= len(form_addresses_inline) - 1:
-
-            content = content.replace(" <div id='list-question-answer' style='color: #808080; display: block;'><i>->list answer<-</i></div> ", form_lists_inline[count], 1)
-            count += 1
-
-        count = 0
-        while count <= len(form_lists_break) - 1:
+        session["updated-content"] = content
             
-            element = '<div style="display: block">' + form_lists_break[count] + '</div>'
-            content = content.replace(" <div id='lists-question-answer' style='color: #808080; display: block;'><i>->list answer<-</i></div> ", element, 1)
-            count += 1
+        return redirect(url_for('generator.preview'))
 
-        count = 0
-        while count <= len(form_lists_inline) - 1:
+    return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
 
-            content = content.replace(" <div id='lists-question-answer' style='color: #808080; display: inline;'><i>->list answer<-</i></div> ", form_lists_inline[count], 1)
-            count += 1
-            
-        rendered = render_template(f"pdf_formed.html", title=Markup(session["pdf-title"]), content=Markup(content))
+@generator_blueprint.route("/preview", methods=["POST", "GET"])
+def preview():
+
+    smartform_name = session["sf-title"]
+    pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+    updated_content = session["updated-content"]
+
+    if request.method == "POST":
+
+        form_dict = request.form.to_dict(flat=False)
+        
+        if list(form_dict.keys())[0] == 'csrf_token':
+            if form_dict['csrf_token'][0] == csrf._get_csrf_token():
+                form_dict.pop('csrf_token')
+            else:
+                raise CSRFTokenMissingException('The CSRF Token is missing.')
+
+
+        rows = session["rows"]
+        cols = session["cols"]
+
+        table = create_table(int(rows), int(cols), form_dict)
+        updated_content = replace_table(table, updated_content, form_dict)
+
+        rendered = render_template(f"pdf_formed.html", title=Markup(session["pdf-title"]), content=Markup(updated_content))
         
         pdf = makepdf(rendered)
         response = make_response(pdf)
@@ -336,4 +283,4 @@ def sf_form():
 
         return response
 
-    return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
+    return render_template("preview.html", title=Markup(session["pdf-title"]), content=Markup(updated_content))
