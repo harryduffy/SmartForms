@@ -11,6 +11,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 app.config['SECRET_KEY'] = '19ec65279d5b111753edafec5790680c'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_PERMANENT'] = True
 
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)

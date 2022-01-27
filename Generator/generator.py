@@ -1,7 +1,7 @@
 from venv import create
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, session, make_response
 from flask_login import login_required, current_user
-from Helpers.helper_functions import makepdf, is_date, create_table, replace_table, holder_replacer
+from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
 from Helpers.user_system import db, csrf
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
 from .SmartForm import SmartForm
@@ -200,7 +200,6 @@ def my_smartforms():
         session["sf-content"] = sf.content
         session["sf-title"] = sf.title
 
-
         return redirect(url_for("generator.sf_form"))
 
     return render_template("my_smartforms.html")
@@ -248,6 +247,7 @@ def sf_form():
             
         return redirect(url_for('generator.preview'))
 
+    print(session["sf-title"])
     return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
 
 @generator_blueprint.route("/preview", methods=["POST", "GET"])
