@@ -4,6 +4,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, UserMixin
 from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
+from flask_session import Session
 from flask import flash
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
@@ -11,11 +12,13 @@ from wtforms.validators import InputRequired, Length, ValidationError
 app.config['SECRET_KEY'] = '19ec65279d5b111753edafec5790680c'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_PERMANENT'] = True
+app.config["SESSION_PERMANENT"] = False
+app.config['SESSION_TYPE'] = 'filesystem'
 
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
+sess = Session(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
