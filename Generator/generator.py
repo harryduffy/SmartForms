@@ -230,6 +230,7 @@ def sf_form():
         content = holder_replacer(form_dict, content, "text")
         content = holder_replacer(form_dict, content, "address")
         content = holder_replacer(form_dict, content, "list")
+        content = holder_replacer(form_dict, content, "date")
 
         form_dates = []
         for i in form_data:
@@ -266,12 +267,7 @@ def preview():
             else:
                 raise CSRFTokenMissingException('The CSRF Token is missing.')
 
-
-        rows = session["rows"]
-        cols = session["cols"]
-
-        table = create_table(int(rows), int(cols), form_dict)
-        updated_content = replace_table(table, updated_content, form_dict)
+        updated_content = replace_table(updated_content, form_dict)
 
         rendered = render_template(f"pdf_formed.html", title=Markup(session["pdf-title"]), content=Markup(updated_content))
         

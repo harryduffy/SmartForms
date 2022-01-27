@@ -23,11 +23,13 @@ def holder_replacer(form_dict, content, type):
     for i in form_dict:
         j = form_dict[i]
         try:
+            print(i.split("-")[1], type)
             if i.split("-")[1] == type:
+                
                 if i.split("-")[0] == "inline":
                     inline_list.append(j[0])
                 else:
-                    break_list.append(j[0])\
+                    break_list.append(j[0])
                         
         except IndexError as e:
             print("Error: " + str(e))
@@ -86,7 +88,7 @@ def create_table(rows, cols, form_dict={}):
 
     return tableHTML
 
-def replace_table(table, content, form_dict):
+def replace_table(content, form_dict):
 
     new_content = content
 
