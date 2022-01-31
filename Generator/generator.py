@@ -1,9 +1,8 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, make_response, session
-from flask_login import login_required, current_user
+from flask_login import login_required, current_user, login_user
 from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
-from Helpers.user_system import db, csrf, User
+from Helpers.user_system import db, csrf, User, bcrypt, LoginForm
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import pickle
 from .SmartForm import SmartForm
 from .PDF import PDF
@@ -348,8 +347,6 @@ def create_pack():
 @login_required
 def pack_document_generation(packtitle, token):
 
-    print(packtitle)
-
     if token == '19ec65279d5b111753edafec5790680c':
         pass
         if "iterator" in session.keys():
@@ -359,7 +356,17 @@ def pack_document_generation(packtitle, token):
     else:
         return redirect(url_for('generator.my_packs'))
 
-    # pack_title = session["title"]
+    if current_user.id == None:
+        form = LoginForm()
+
+        if form.validate_on_submit():
+            user = User.query.filter_by(username=form.username.data).first()
+            if user:
+                if bcrypt.check_password_hash(user.password, form.password.data):
+                    login_user(user)
+
+        return render_template("login.html", form=form)
+
     pack = Pack.query.filter_by(title=packtitle, user=current_user.id).first()
     smartforms = pickle.loads(pack.smartforms)
     i = session["iterator"]
