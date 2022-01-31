@@ -304,7 +304,7 @@ def my_packs():
             session["pack-title"] = pack_title
             session["iterator"] = 0
 
-            return redirect(url_for("generator.pack_document_generation", packtitle=pack_title, token='19ec65279d5b111753edafec5790680c'))
+            return redirect(url_for("generator.pack_document_generation"))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
 
@@ -343,31 +343,13 @@ def create_pack():
 
     return render_template("create_pack.html", smartforms=smartforms)
 
-@generator_blueprint.route(f"/pack_document_generation/<packtitle>/<token>", methods=["POST", "GET"])
+@generator_blueprint.route(f"/pack_document_generation", methods=["POST", "GET"])
 @login_required
-def pack_document_generation(packtitle, token):
+def pack_document_generation():
 
-    if token == '19ec65279d5b111753edafec5790680c':
-        pass
-        if "iterator" in session.keys():
-            i = session["iterator"]
-        else:
-            session["iterator"] = 0
-    else:
-        return redirect(url_for('generator.my_packs'))
+    pack_title = session["pack-title"]
 
-    if current_user.id == None:
-        form = LoginForm()
-
-        if form.validate_on_submit():
-            user = User.query.filter_by(username=form.username.data).first()
-            if user:
-                if bcrypt.check_password_hash(user.password, form.password.data):
-                    login_user(user)
-
-        return render_template("login.html", form=form)
-
-    pack = Pack.query.filter_by(title=packtitle, user=current_user.id).first()
+    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
     smartforms = pickle.loads(pack.smartforms)
     i = session["iterator"]
     sf = smartforms[i]
