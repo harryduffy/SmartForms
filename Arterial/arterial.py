@@ -52,14 +52,3 @@ def logout():
     logout_user()
 
     return redirect(url_for("arterial.index"))
-
-@arterial_blueprint.route("/client_forms", methods=["POST", "GET"])
-@login_required
-def show_client_form():
-
-    url_key = request.args.get("key")
-    print(url_key)
-    hashed_query = str(bcrypt.check_password_hash((url_key)).lstrip("b'").rstrip("'")
-    print(hashed_query)
-
-    return render_template("index.html")
