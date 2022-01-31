@@ -1,4 +1,3 @@
-import re
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, make_response, session
 from flask_login import login_required, current_user
 from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
@@ -303,7 +302,7 @@ def my_packs():
             
             pack_title = request.form["pack-name"]
             session["pack-title"] = pack_title
-
+            session["iterator"] = 0
             return redirect(url_for("generator.pack_document_generation"))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
@@ -343,16 +342,35 @@ def create_pack():
 
     return render_template("create_pack.html", smartforms=smartforms)
 
-@generator_blueprint.route("/pack_document_generation/", methods=["POST", "GET"])
+@generator_blueprint.route("/pack_document_generation", methods=["POST", "GET"])
 @login_required
 def pack_document_generation():
 
     pack_title = session["title"]
     pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
-
     smartforms = pickle.loads(pack.smartforms)
-    
-    for i in smartforms:
-        print(i.title)
+    i = session["iterator"]
+    print(i)
+    sf = smartforms[i]
+    pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
 
-    return redirect(url_for(""))
+    if request.method == "POST":
+
+        if request.form["action"] == "Next":
+            if session["iterator"] >= len(smartforms) - 1:
+                session["iterator"] = 0
+            else:
+                session["iterator"] = session["iterator"] + 1
+            sf = smartforms[session["iterator"]]
+            pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
+            return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)
+        else:
+            rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(pdf.content))
+            pdf = makepdf(rendered)
+            response = make_response(pdf)
+            response.headers["Content-Type"] = "flask_application/pdf"
+            response.headers["Content-Disposition"] = f"attachment; filename={sf.title}.pdf"
+            response.headers["X-Frame-Options"] = "SAMEORIGIN"
+            return response
+
+    return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)

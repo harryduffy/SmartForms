@@ -16,6 +16,9 @@
                 </div>
                 <div class="center top-padding">
                     <button type="submit" id="generate-pdf" name="action" value="Generate PDF">Generate PDF</button>
+                    {% if pack_form == True %}
+                        <button type="submit" id="generate-pdf" name="action" value="Next" style="margin-left: 20px;">Next</button>
+                    {% endif %}
                 </div>
             </form>
         </div>

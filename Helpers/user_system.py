@@ -6,6 +6,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
 from flask import flash
+from celery import Celery
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
