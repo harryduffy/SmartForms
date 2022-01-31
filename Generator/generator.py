@@ -343,7 +343,7 @@ def create_pack():
 
     return render_template("create_pack.html", smartforms=smartforms)
 
-@generator_blueprint.route("/pack_document_generation", methods=["POST", "GET"])
+@generator_blueprint.route("/pack_document_generation/", methods=["POST", "GET"])
 @login_required
 def pack_document_generation():
 
@@ -355,4 +355,4 @@ def pack_document_generation():
     for i in smartforms:
         print(i.title)
 
-    return "banana"
+    return redirect(url_for(""))
