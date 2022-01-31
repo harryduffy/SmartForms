@@ -1,14 +1,19 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, make_response, session
-from flask_login import login_required, current_user, login_user
+from flask_login import login_required, current_user
 from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
-from Helpers.user_system import db, csrf, User, bcrypt, LoginForm
+from Helpers.user_system import db, csrf
+from Helpers.Email import Email
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import pickle
+import secrets
 from .SmartForm import SmartForm
 from .PDF import PDF
 from .Pack import Pack
 
 generator_blueprint = Blueprint("generator", __name__, static_folder="static", template_folder="templates")
+access_key = secrets.token_urlsafe(16)
+serialiser = Serializer(access_key)
 
 @generator_blueprint.route("/initial_form", methods=["POST", "GET"])
 @login_required
@@ -185,50 +190,60 @@ def generator():
     else:
         return render_template("generator.html", smartform_title=smartform_name, sf_content=Markup(sf.content), pdf_content=Markup(pdf.content))
 
-@generator_blueprint.route("/sf_form", methods=["POST", "GET"])
+@generator_blueprint.route("/sf_form/<token>", methods=["POST", "GET"])
 @login_required
-def sf_form():
+def sf_form(token):
 
-    if request.method == "POST":
+    if token == session["url-access-key"]:   
 
-        smartform_name = session["sf-title"]
+        if request.method == "POST":
 
-        pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+            if request.form["action"] == "Generate PDF":
+                smartform_name = session["sf-title"]
 
-        form_data = list(request.form.values())
-        form_data.remove("Generate PDF")
-        
-        if form_data[0] == csrf._get_csrf_token():
-            form_data.pop(0)
-        else:
-            raise CSRFTokenMissingException('The CSRF Token is missing.')
+                pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
 
-        form_dict = request.form.to_dict(flat=False)
+                form_data = list(request.form.values())
+                form_data.remove("Generate PDF")
+                
+                if form_data[0] == csrf._get_csrf_token():
+                    form_data.pop(0)
+                else:
+                    raise CSRFTokenMissingException('The CSRF Token is missing.')
 
-        content = pdf.content
+                form_dict = request.form.to_dict(flat=False)
 
-        content = holder_replacer(form_dict, content, "text")
-        content = holder_replacer(form_dict, content, "address")
-        content = holder_replacer(form_dict, content, "list")
-        content = holder_replacer(form_dict, content, "date")
+                content = pdf.content
 
-        form_dates = []
-        for i in form_data:
-            if is_date(i):
-                form_dates.append(i)
-                form_data.remove(i)
+                content = holder_replacer(form_dict, content, "text")
+                content = holder_replacer(form_dict, content, "address")
+                content = holder_replacer(form_dict, content, "list")
+                content = holder_replacer(form_dict, content, "date")
 
-        count = 0
-        while count <= len(form_dates) - 1:
+                form_dates = []
+                for i in form_data:
+                    if is_date(i):
+                        form_dates.append(i)
+                        form_data.remove(i)
 
-            content = content.replace(f" <div id='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> ", form_dates[count], 1)
-            count += 1
+                count = 0
+                while count <= len(form_dates) - 1:
 
-        session["updated-content"] = content
-            
-        return redirect(url_for('generator.preview'))
+                    content = content.replace(f" <div id='date-question-answer' style='color: #808080; display: inline;'><i>->date answer<-</i></div> ", form_dates[count], 1)
+                    count += 1
 
-    return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
+                session["updated-content"] = content
+                    
+                return redirect(url_for('generator.preview'))
+
+            else:
+                return redirect(url_for("generator.sharing_forms", type="sf_form"))
+
+        return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
+
+    else:
+        flash("This link has expired or you do not have access to it.")
+        redirect(url_for("arterial.register"))
 
 @generator_blueprint.route("/preview", methods=["POST", "GET"])
 def preview():
@@ -276,8 +291,9 @@ def my_smartforms():
         session["pdf-title"] = pdf.title
         session["sf-content"] = sf.content
         session["sf-title"] = sf.title
+        session["url-access-key"] = secrets.token_urlsafe(16)
 
-        return redirect(url_for("generator.sf_form"))
+        return redirect(url_for("generator.sf_form", token=session["url-access-key"]))
 
     return render_template("my_smartforms.html")
 
@@ -300,11 +316,18 @@ def my_packs():
 
         else:
             
-            pack_title = request.form["pack-name"]
-            session["pack-title"] = pack_title
-            session["iterator"] = 0
+            if request.form["action"] == "submit":
+                pack_title = request.form["pack-name"]
+                session["pack-title"] = pack_title
+                session["url-access-token"] = secrets.token_urlsafe(16)
 
-            return redirect(url_for("generator.pack_document_generation"))
+                return redirect(url_for("generator.pack_document_generation", token=session["url-access-token"]))
+            
+            else: 
+                pack_title = request.form["nm-pack"]
+                session["pack-title"] = pack_title
+
+                return redirect(url_for("generator.sharing_forms", type="pack_document_generation"))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
 
@@ -343,35 +366,66 @@ def create_pack():
 
     return render_template("create_pack.html", smartforms=smartforms)
 
-@generator_blueprint.route(f"/pack_document_generation", methods=["POST", "GET"])
+@generator_blueprint.route(f"/pack_document_generation/<token>", methods=["POST", "GET"])
 @login_required
-def pack_document_generation():
+def pack_document_generation(token):
 
-    pack_title = session["pack-title"]
+    if token == session["url-access-token"]:
 
-    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
-    smartforms = pickle.loads(pack.smartforms)
-    i = session["iterator"]
-    sf = smartforms[i]
-    pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
+        data = serialiser.loads(token)
+        pack_title = data["pack_title"]
+        user_id = data["user_id"]
+
+        pack = Pack.query.filter_by(title=pack_title, user=user_id).first()
+        smartforms = pickle.loads(pack.smartforms)
+
+        if "iterator" not in session:
+            session["iterator"] = 0
+        
+        sf = smartforms[session["iterator"]]
+        pdf = PDF.query.filter_by(title=sf.title, user=user_id).first()
+
+        if request.method == "POST":
+
+            if request.form["action"] == "Next":
+                if session["iterator"] >= len(smartforms) - 1:
+                    session["iterator"] = 0
+                else:
+                    session["iterator"] = session["iterator"] + 1
+                sf = smartforms[session["iterator"]]
+                pdf = PDF.query.filter_by(title=sf.title, user=user_id).first()
+                return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)
+            else:
+                rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(pdf.content))
+                pdf = makepdf(rendered)
+                response = make_response(pdf)
+                response.headers["Content-Type"] = "flask_application/pdf"
+                response.headers["Content-Disposition"] = f"attachment; filename={sf.title}.pdf"
+                response.headers["X-Frame-Options"] = "SAMEORIGIN"
+                return response
+
+        return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)
+    
+    else:
+        return redirect(url_for('arterial.register'))
+
+@generator_blueprint.route(f"/sharing_forms/<type>", methods=["POST", "GET"])
+@login_required
+def sharing_forms(type):
+
+    # just a form for the email class with the one time link
+    email = Email("Harry Duffy", "0450322069", "Project Analyst")
+    print(session["pack-title"])
+    token = serialiser.dumps({'user_id': current_user.id, 'pack_title': session["pack-title"]}).decode('utf-8')
+    session["url-access-token"] = token
+    one_time_link = f"http://127.0.0.1:5000/generator/{type}/" + token
+    body =f'''Here is the one time link to access the document forms: {one_time_link}'''
 
     if request.method == "POST":
 
-        if request.form["action"] == "Next":
-            if session["iterator"] >= len(smartforms) - 1:
-                session["iterator"] = 0
-            else:
-                session["iterator"] = session["iterator"] + 1
-            sf = smartforms[session["iterator"]]
-            pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
-            return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)
-        else:
-            rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(pdf.content))
-            pdf = makepdf(rendered)
-            response = make_response(pdf)
-            response.headers["Content-Type"] = "flask_application/pdf"
-            response.headers["Content-Disposition"] = f"attachment; filename={sf.title}.pdf"
-            response.headers["X-Frame-Options"] = "SAMEORIGIN"
-            return response
+        receiver = request.form["receiver"]
+        email.send_email("Documents", body, receiver)
 
-    return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)
+    # sends to generator.sf_form or generator.pack_document_generation depending on whether smartform or pack, respectively
+
+    return render_template("sharing_forms.html")

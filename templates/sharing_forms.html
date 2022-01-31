@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share</title>
+    <style>
+        html, body {
+            font-family: sans-serif;
+            height: 100%;
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 0;
+        }
+
+        h1, h2, h3 {
+            color: #05445E;
+        }
+
+        h4, h5, h6 {
+            color: #05445E;
+        }
+
+        h4 {
+            font-size: 20px;
+        }
+
+        input {
+            display: block;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+            border: 2px solid #05445E;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        textarea {
+            display: block;
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #05445E;
+            border-radius: 5px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        button {
+            display: block;
+            padding: 10px;
+            text-align: center;
+            color: #05445E;
+            font-size: 20px;
+            background-color: white;
+            border: 1px solid #05445E;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: orange;
+            font-weight: bold;
+            color: white;
+        }
+
+        .body-container {
+            margin: 5%;
+        }
+
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            place-items: center;
+        }
+
+        .center-form {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            place-items: center;
+            width: 100%;
+            height: 50%;
+        }
+
+        .center-form input {
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 30px;
+        }
+
+        .center-form input[type=submit] {
+            width: 120px;
+        }
+
+        .center-form input[type=submit]:hover {
+            background-color: orange;
+            font-weight: bold;
+            color: white;
+        }
+
+        .top-padding {
+            padding-top: 50px;
+        }
+
+        .other-nav {
+            font-size: 20px;
+            color: white;
+            float: left;
+        }
+
+        .other-nav:hover {
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .end-nav {
+            position: absolute;
+            display: inline-block;
+            right: 30px;
+        }
+
+        .end-nav button {
+            font-weight: bold;
+        }
+
+        .image-text {
+            width: 100%;
+            height: 100%;
+        }
+
+        .divider {
+            position: absolute;
+            left: 30px;
+            right: 30px;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+            
+        }
+
+        .inline-radios {
+            width: 35%;
+            display: flex;
+            margin-right: auto;
+            margin-left: auto;
+            font-weight: bold;
+            color: #05445E;
+        }
+
+        .radio {
+            flex: 1 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+
+        .search-bar input {
+            border: 2px solid black;
+            width: 600px;
+        }
+
+        #navbar {
+            display: inline-flex;
+            background-color: #05445E;
+            width: 100%;
+            align-items: center;
+        }
+
+        #navbar li {
+            display: inline;
+            padding: 20px;
+        }
+
+        #navbar a {
+            color: white;
+            text-decoration: none;
+        }
+
+        #code-symbol {
+            letter-spacing: 3px;
+        }
+
+        #logo-nav {
+            color: white;
+            border-right: 2px dotted black;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        #cover-div {
+            width: 100%;
+            height: 550px;
+            align-items: center;
+        }
+
+        #title {
+            font-size: 50px;
+        }
+
+        #title-subtext {
+            font-size: 20px;
+            margin-left: 10%;
+            margin-right: 10%;
+        }
+
+        #middle-div {
+            position: absolute;
+            right: 0;
+            left: 0;
+            height: 30%;
+        }
+
+        #smartform-name-input {
+            width: 50%;
+        }
+
+        #smartform-inputs {
+            width: 75%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        #textarea-inputs {
+            width: 75%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        #data-list-inputs {
+            width: 75%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        #date-smartform-inputs {
+            width: 75%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        #address-smartform-inputs {
+            width: 75%;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        #enter-prompt {
+            display: block;
+            text-align: center;
+        }
+
+        #packs-input {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        #plus-button {
+            width: 50px;
+            height: 50px;
+            background-color: #05445E;
+            border: solid 1px #000;
+            border-radius: 50%;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        #sf-add {
+            position: relative;
+            margin-top: 20px;
+            margin-left: 33%;
+            width: 190px;
+        }
+
+        #pack-name {
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav id="navbar">
+        <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a href="/">Home</a></li><li class="other-nav"><a href="/my_smartforms">My SmartForms</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li>
+    </nav>
+    <div class="body-container">
+        <h1 class="center"> Share SmartForms</h1>
+        <form action="#" method="POST" class="center-form" style="display: block;">
+            <input type="hidden" name="csrf_token" id="smartform-requested-csrf" value="{{ csrf_token() }}"/>
+            <input type="email" name="receiver" placeholder="Enter the receivers email..."/>
+            <button type="submit" style="display: block; margin-left: auto; margin-right: auto; margin-top: 20px;">Send Form</button>
+        </form>
+    </div>
+    
+</body>
+</html>

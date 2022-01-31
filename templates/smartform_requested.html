@@ -298,7 +298,8 @@
                     {{ content }}
                 </div>
                 <div class="center top-padding">
-                    <button type="submit" id="generate-pdf" name="action" value="Generate PDF">Generate PDF</button>
+                    <button type="submit" id="generate-pdf" name="action" value="Generate PDF" style="display: inline;">Generate PDF</button>
+                    <button type="submit" class="center" name="action" value="share" id="submit-button" style="display: inline; margin-left: 20px;">Share</button>
                     {% if pack_form == True %}
                         <button type="submit" id="generate-pdf" name="action" value="Next" style="margin-left: 20px;">Next</button>
                     {% endif %}

@@ -17,8 +17,9 @@
 
                     <form action="#" method="POST">
                         <input type="hidden" name="csrf_token" id="generator-csrf-top" value="{{ csrf_token() }}"/>
-                        <input list="packs" id="packs-input" name="nm-smartform" maxlength="50" placeholder="SmartForm Pack Name(s)...">
-                        <button type="submit" name="action" id="pack-entered" value="Submit" style="margin-top: 20px; margin-left: 42%;">Submit</button>
+                        <input list="packs" id="packs-input" name="nm-pack" maxlength="50" placeholder="SmartForm Pack Name(s)...">
+                        <button type="submit" name="action" id="pack-entered" value="submit" style="margin-top: 20px; display: inline;">Submit</button>
+                        <button type="submit" name="action" value="share" style="display: inline;">Share</button>
                         <div class="center" style="margin-top: 20px;">
                             <input for="plus-button" type="text" id="pack-name" name="pack-name" placeholder="Enter New Pack Name..." style="margin-right: 20px; width: 250px;">
                             <input type="submit" name="action" id="plus-button" value="+"/>
