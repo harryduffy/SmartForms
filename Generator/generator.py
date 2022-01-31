@@ -319,23 +319,26 @@ def create_pack():
     smartforms_loaded = pickle.loads(pack.smartforms)
     
     if request.method == "POST":
+        
+        if request.form["action"] == "submit":
+
+            return redirect(url_for("generator.my_packs"))
 
         sf_name = request.form["nm-smartform"]
 
         if sf_name not in smartforms_loaded:
             sf = SmartForm.query.filter_by(title=sf_name, user=current_user.id).first()
             smartforms_loaded.append(sf)
+
+            pack.smartforms = pickle.dumps(smartforms_loaded)
+
+            db.session.add(pack)
+            db.session.commit()
         else:
             flash("SmartForm already in pack.")
 
         pack.smartforms = pickle.dumps(smartforms_loaded)
-
-        if request.form["action"] == "submit":
-            db.session.add(pack)
-            db.session.commit()
-            return redirect(url_for("generator.my_packs"))
        
-    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
     smartforms = SmartForm.query.filter_by(user=current_user.id).all()
 
     return render_template("create_pack.html", smartforms=smartforms)
@@ -344,14 +347,12 @@ def create_pack():
 @login_required
 def pack_document_generation():
 
-    pack_title = session["pack-title"]
+    pack_title = session["title"]
     pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
 
-    print(pack)
-
-    # smartforms = pickle.loads(pack.smartforms)
+    smartforms = pickle.loads(pack.smartforms)
     
-    # for i in smartforms:
-    #     print(i)
+    for i in smartforms:
+        print(i.title)
 
     return "banana"
