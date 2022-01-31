@@ -1,10 +1,13 @@
+import re
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, make_response, session
 from flask_login import login_required, current_user
 from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
 from Helpers.user_system import db, csrf
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
+import pickle
 from .SmartForm import SmartForm
 from .PDF import PDF
+from .Pack import Pack
 
 generator_blueprint = Blueprint("generator", __name__, static_folder="static", template_folder="templates")
 
@@ -183,26 +186,6 @@ def generator():
     else:
         return render_template("generator.html", smartform_title=smartform_name, sf_content=Markup(sf.content), pdf_content=Markup(pdf.content))
 
-@generator_blueprint.route("/my_smartforms", methods=["POST", "GET"])
-@login_required
-def my_smartforms():
-    
-    if request.method == "POST":
-
-        smartform_name = request.form["smartform-name"]
-
-        sf = SmartForm.query.filter_by(title=smartform_name, user=current_user.id).first()
-        pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
-        
-        session["pdf-content"] = pdf.content
-        session["pdf-title"] = pdf.title
-        session["sf-content"] = sf.content
-        session["sf-title"] = sf.title
-
-        return redirect(url_for("generator.sf_form"))
-
-    return render_template("my_smartforms.html")
-
 @generator_blueprint.route("/sf_form", methods=["POST", "GET"])
 @login_required
 def sf_form():
@@ -278,3 +261,97 @@ def preview():
         return response
 
     return render_template("preview.html", title=Markup(session["pdf-title"]), content=Markup(updated_content))
+
+@generator_blueprint.route("/my_smartforms", methods=["POST", "GET"])
+@login_required
+def my_smartforms():
+    
+    if request.method == "POST":
+
+        smartform_name = request.form["smartform-name"]
+
+        sf = SmartForm.query.filter_by(title=smartform_name, user=current_user.id).first()
+        pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+        
+        session["pdf-content"] = pdf.content
+        session["pdf-title"] = pdf.title
+        session["sf-content"] = sf.content
+        session["sf-title"] = sf.title
+
+        return redirect(url_for("generator.sf_form"))
+
+    return render_template("my_smartforms.html")
+
+@generator_blueprint.route("/my_packs", methods=["POST", "GET"])
+@login_required
+def my_packs():
+    
+    if request.method == "POST":
+
+        if request.form["action"] == "+":
+
+            title = request.form["pack-name"]
+            session["title"] = title
+            
+            pack = Pack(title=title, smartforms=pickle.dumps([]), user=current_user.id)
+            db.session.add(pack)
+            db.session.commit()
+
+            return redirect(url_for("generator.create_pack"))
+
+        else:
+            
+            pack_title = request.form["pack-name"]
+            session["pack-title"] = pack_title
+
+            return redirect(url_for("generator.pack_document_generation"))
+
+    packs = Pack.query.filter_by(user=current_user.id).all()
+
+    return render_template("my_packs.html", packs=packs)
+
+@generator_blueprint.route("/create_pack", methods=["POST", "GET"])
+@login_required
+def create_pack():
+
+    pack_title = session["title"]
+    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
+    smartforms_loaded = pickle.loads(pack.smartforms)
+    
+    if request.method == "POST":
+
+        sf_name = request.form["nm-smartform"]
+
+        if sf_name not in smartforms_loaded:
+            sf = SmartForm.query.filter_by(title=sf_name, user=current_user.id).first()
+            smartforms_loaded.append(sf)
+        else:
+            flash("SmartForm already in pack.")
+
+        pack.smartforms = pickle.dumps(smartforms_loaded)
+
+        if request.form["action"] == "submit":
+            db.session.add(pack)
+            db.session.commit()
+            return redirect(url_for("generator.my_packs"))
+       
+    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
+    smartforms = SmartForm.query.filter_by(user=current_user.id).all()
+
+    return render_template("create_pack.html", smartforms=smartforms)
+
+@generator_blueprint.route("/pack_document_generation", methods=["POST", "GET"])
+@login_required
+def pack_document_generation():
+
+    pack_title = session["pack-title"]
+    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
+
+    print(pack)
+
+    # smartforms = pickle.loads(pack.smartforms)
+    
+    # for i in smartforms:
+    #     print(i)
+
+    return "banana"

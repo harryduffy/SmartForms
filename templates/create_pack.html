@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../static/stylesheets/base.css">
+    </head>
+    <title>Create Pack</title>
+    <body>
+        <nav id="navbar">
+            <li id="logo-nav"><a><span id="code-symbol">&#60;/&#62;</span> smartforms</a></li><li class="other-nav"><a href="/">Home</a></li><li class="other-nav"><a href="{{url_for('generator.my_smartforms')}}">My SmartForms</a></li><li class="other-nav"><a href="{{url_for('generator.my_packs')}}">My Packs</a></li><li class="other-nav"><a>Tutorial</a></li><li class="other-nav"><a>Templates</a></li>
+        </nav>
+        <div class="body-container">
+            <div style="text-align: center;">
+                <h1>
+                    SmartForms to Add
+                </h1>
+                <h3>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                            <h3 style="color: red">{{message}}</h3>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </h3>
+                <div class="search-bar center">
+                    <form action="#" method="POST">
+                        <input type="hidden" name="csrf_token" id="generator-csrf-top" value="{{ csrf_token() }}"/>
+                        <input list="smartforms" id="packs-input" name="nm-smartform" maxlength="50" placeholder="SmartForm Name(s)...">
+
+            
+                        <datalist id="smartforms">
+                            {% for sf in smartforms %}
+                                <option value="{{sf.title}}">
+                            {% endfor %}
+                        </datalist>
+                        <br>
+                        <button type="submit" id="sf-add" name="action" value="add-smartform">Add SmartForm</button>
+                        <button type="submit" name="action" id="pack-entered" value="submit" style="margin-top: 20px; margin-left: 42%;">Create Pack</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

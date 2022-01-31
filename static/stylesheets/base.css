@@ -147,6 +147,11 @@ button:hover {
     margin: 0;
 }
 
+.search-bar input {
+    border: 2px solid black;
+    width: 600px;
+}
+
 #navbar {
     display: inline-flex;
     background-color: #05445E;
@@ -245,4 +250,32 @@ button:hover {
 #enter-prompt {
     display: block;
     text-align: center;
+}
+
+#packs-input {
+    display: inline;
+    margin-right: 10px;
+}
+
+#plus-button {
+    width: 50px;
+    height: 50px;
+    background-color: #05445E;
+    border: solid 1px #000;
+    border-radius: 50%;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+#sf-add {
+    position: relative;
+    margin-top: 20px;
+    margin-left: 33%;
+    width: 190px;
+}
+
+#pack-name {
+    width: 100px;
 }
