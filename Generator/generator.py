@@ -191,7 +191,7 @@ def generator():
 @login_required
 def sf_form(token):
 
-    if token == session["url-access-key"]:   
+    if token == session["url-access-token"]: 
 
         if request.method == "POST":
 
@@ -288,9 +288,9 @@ def my_smartforms():
         session["pdf-title"] = pdf.title
         session["sf-content"] = sf.content
         session["sf-title"] = sf.title
-        session["url-access-key"] = serialiser.dumps({'user_id': current_user.id, 'pack_title': sf.title}).decode('utf-8')
+        session["url-access-token"] = serialiser.dumps({'user_id': current_user.id, 'pack_title': sf.title}).decode('utf-8')
 
-        return redirect(url_for("generator.sf_form", token=session["url-access-key"]))
+        return redirect(url_for("generator.sf_form", token=session["url-access-token"]))
 
     return render_template("my_smartforms.html")
 
