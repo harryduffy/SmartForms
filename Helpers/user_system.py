@@ -16,7 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 
-serialiser = Serializer(app.secret_key, expires_in=3600)
+serialiser = Serializer(app.secret_key, expires_in=7200)
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
