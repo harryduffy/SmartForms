@@ -449,6 +449,9 @@ def shared_resource(token):
     
     
     else:
+
+        sf = SmartForm.query.filter_by(title=title, user=current_user.id).first()
+
         if request.method == "POST":
 
             if request.form["action"] == "Generate PDF":
@@ -488,5 +491,5 @@ def shared_resource(token):
                     
                 return redirect(url_for('generator.preview'))
 
-        return render_template(f"smartform_requested.html", title=Markup(session["sf-title"]), content=Markup(session["sf-content"]))
+        return render_template(f"smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content))
 
