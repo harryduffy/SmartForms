@@ -288,7 +288,7 @@ def my_smartforms():
         session["pdf-title"] = pdf.title
         session["sf-content"] = sf.content
         session["sf-title"] = sf.title
-        session["url-access-key"] = secrets.token_urlsafe(16)
+        session["url-access-key"] = serialiser.dumps({'user_id': current_user.id, 'pack_title': sf.title}).decode('utf-8')
 
         return redirect(url_for("generator.sf_form", token=session["url-access-key"]))
 
