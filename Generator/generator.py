@@ -452,6 +452,8 @@ def shared_resource(token):
 
         sf = SmartForm.query.filter_by(title=title, user=current_user.id).first()
 
+        print(sf.content)
+
         if request.method == "POST":
 
             if request.form["action"] == "Generate PDF":
