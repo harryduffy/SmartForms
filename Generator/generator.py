@@ -1,10 +1,9 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, make_response, session
 from flask_login import login_required, current_user
 from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
-from Helpers.user_system import db, csrf
+from Helpers.user_system import db, csrf, serialiser
 from Helpers.Email import Email
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import pickle
 import secrets
 from .SmartForm import SmartForm
@@ -12,8 +11,6 @@ from .PDF import PDF
 from .Pack import Pack
 
 generator_blueprint = Blueprint("generator", __name__, static_folder="static", template_folder="templates")
-access_key = secrets.token_urlsafe(16)
-serialiser = Serializer(access_key)
 
 @generator_blueprint.route("/initial_form", methods=["POST", "GET"])
 @login_required
@@ -319,7 +316,7 @@ def my_packs():
             if request.form["action"] == "submit":
                 pack_title = request.form["pack-name"]
                 session["pack-title"] = pack_title
-                session["url-access-token"] = secrets.token_urlsafe(16)
+                session["url-access-token"] = serialiser.dumps({'user_id': current_user.id, 'pack_title': pack_title}).decode('utf-8')
 
                 return redirect(url_for("generator.pack_document_generation", token=session["url-access-token"]))
             
@@ -372,6 +369,8 @@ def pack_document_generation(token):
 
     if token == session["url-access-token"]:
 
+        print(token)
+
         data = serialiser.loads(token)
         pack_title = data["pack_title"]
         user_id = data["user_id"]
@@ -415,11 +414,10 @@ def sharing_forms(type):
 
     # just a form for the email class with the one time link
     email = Email("Harry Duffy", "0450322069", "Project Analyst")
-    print(session["pack-title"])
     token = serialiser.dumps({'user_id': current_user.id, 'pack_title': session["pack-title"]}).decode('utf-8')
     session["url-access-token"] = token
     one_time_link = f"http://127.0.0.1:5000/generator/{type}/" + token
-    body =f'''Here is the one time link to access the document forms: {one_time_link}'''
+    body = f'''Here is the one time link to access the document forms: {one_time_link}'''
 
     if request.method == "POST":
 

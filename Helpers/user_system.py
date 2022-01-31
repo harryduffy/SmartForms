@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.csrf import CSRFProtect
 from flask_session import Session
 from flask import flash
-from celery import Celery
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
@@ -16,6 +16,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SESSION_PERMANENT"] = False
 app.config['SESSION_TYPE'] = 'filesystem'
 
+serialiser = Serializer(app.secret_key, expires_in=3600)
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
