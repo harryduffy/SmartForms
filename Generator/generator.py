@@ -358,7 +358,11 @@ def pack_document_generation(token, packtitle):
     # pack_title = session["title"]
     pack = Pack.query.filter_by(title=packtitle, user=current_user.id).first()
     smartforms = pickle.loads(pack.smartforms)
-    i = session["iterator"]
+    try:
+        i = session["iterator"]
+    except KeyError:
+        session["iterator"] = 0
+        i = session["iterator"] 
     sf = smartforms[i]
     pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
 
