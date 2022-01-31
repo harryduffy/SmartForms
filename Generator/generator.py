@@ -1,8 +1,9 @@
 from flask import render_template, Blueprint, flash, redirect, url_for, request, Markup, make_response, session
 from flask_login import login_required, current_user
 from Helpers.helper_functions import makepdf, is_date, replace_table, holder_replacer
-from Helpers.user_system import db, csrf
+from Helpers.user_system import db, csrf, User
 from Exceptions.exceptions import ContentNull, CSRFTokenMissingException
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import pickle
 from .SmartForm import SmartForm
 from .PDF import PDF
@@ -303,7 +304,10 @@ def my_packs():
             pack_title = request.form["pack-name"]
             session["pack-title"] = pack_title
             session["iterator"] = 0
-            return redirect(url_for("generator.pack_document_generation"))
+
+            s = Serializer('19ec65279d5b111753edafec5790680c', 60*30)
+            token = s.dumps({'user_id': current_user.id}).decode('utf-8')
+            return redirect(url_for("generator.pack_document_generation", token=token, packtitle="Harrys Pack"))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
 
@@ -342,15 +346,28 @@ def create_pack():
 
     return render_template("create_pack.html", smartforms=smartforms)
 
-@generator_blueprint.route("/pack_document_generation", methods=["POST", "GET"])
-@login_required
-def pack_document_generation():
+@generator_blueprint.route(f"/pack_document_generation/<packtitle>/<token>", methods=["POST", "GET"])
+def pack_document_generation(token, packtitle):
 
-    pack_title = session["title"]
-    pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
+    if token == "normal":
+        print("here")
+    else:
+        s = Serializer('19ec65279d5b111753edafec5790680c')
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return "hey"
+
+        user = User.query.get(user_id)
+
+        if not user:
+            flash('This is an invalid or expired URL, please generate a new one!', 'warning')
+            return redirect(url_for('generator.my_packs'))
+
+    # pack_title = session["title"]
+    pack = Pack.query.filter_by(title=packtitle, user=current_user.id).first()
     smartforms = pickle.loads(pack.smartforms)
     i = session["iterator"]
-    print(i)
     sf = smartforms[i]
     pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
 
