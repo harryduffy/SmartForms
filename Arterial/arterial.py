@@ -1,7 +1,10 @@
-from flask import Blueprint, redirect, url_for, render_template
+from flask import Blueprint, redirect, url_for, render_template,request
 from app import app
 from flask_login import login_required, login_user, logout_user
 from Helpers.user_system import LoginForm, RegisterForm, User, db, bcrypt
+
+app.config['SECRET_KEY'] = '19ec65279d5b111753edafec5790680c'
+
 
 arterial_blueprint = Blueprint("arterial", __name__, static_folder="static", template_folder="templates")
 
@@ -44,7 +47,6 @@ def register():
     return render_template("register.html", form=form)
 
 @arterial_blueprint.route("/logout", methods=["POST", "GET"])
-@login_required
 def logout():
 
     logout_user()
