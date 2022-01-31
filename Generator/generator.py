@@ -305,7 +305,7 @@ def my_packs():
             session["pack-title"] = pack_title
             session["iterator"] = 0
 
-            return redirect(url_for("generator.pack_document_generation", token='19ec65279d5b111753edafec5790680c', packtitle=pack_title))
+            return redirect(url_for("generator.pack_document_generation", packtitle=pack_title))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
 
