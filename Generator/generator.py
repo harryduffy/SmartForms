@@ -305,9 +305,7 @@ def my_packs():
             session["pack-title"] = pack_title
             session["iterator"] = 0
 
-            s = Serializer('19ec65279d5b111753edafec5790680c', 60*30)
-            token = s.dumps({'user_id': current_user.id}).decode('utf-8')
-            return redirect(url_for("generator.pack_document_generation", token=token, packtitle="Harrys Pack"))
+            return redirect(url_for("generator.pack_document_generation", token='19ec65279d5b111753edafec5790680c', packtitle=pack_title))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
 
@@ -347,22 +345,15 @@ def create_pack():
     return render_template("create_pack.html", smartforms=smartforms)
 
 @generator_blueprint.route(f"/pack_document_generation/<packtitle>/<token>", methods=["POST", "GET"])
+@login_required
 def pack_document_generation(token, packtitle):
 
-    if token == "normal":
-        print("here")
+    print(packtitle)
+
+    if token == '19ec65279d5b111753edafec5790680c':
+        pass
     else:
-        s = Serializer('19ec65279d5b111753edafec5790680c')
-        try:
-            user_id = s.loads(token)['user_id']
-        except:
-            return "hey"
-
-        user = User.query.get(user_id)
-
-        if not user:
-            flash('This is an invalid or expired URL, please generate a new one!', 'warning')
-            return redirect(url_for('generator.my_packs'))
+        return redirect(url_for('generator.my_packs'))
 
     # pack_title = session["title"]
     pack = Pack.query.filter_by(title=packtitle, user=current_user.id).first()
