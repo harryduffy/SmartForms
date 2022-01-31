@@ -305,7 +305,7 @@ def my_packs():
             session["pack-title"] = pack_title
             session["iterator"] = 0
 
-            return redirect(url_for("generator.pack_document_generation", packtitle=pack_title))
+            return redirect(url_for("generator.pack_document_generation", packtitle=pack_title, token='19ec65279d5b111753edafec5790680c'))
 
     packs = Pack.query.filter_by(user=current_user.id).all()
 
@@ -346,23 +346,23 @@ def create_pack():
 
 @generator_blueprint.route(f"/pack_document_generation/<packtitle>/<token>", methods=["POST", "GET"])
 @login_required
-def pack_document_generation(token, packtitle):
+def pack_document_generation(packtitle, token):
 
     print(packtitle)
 
     if token == '19ec65279d5b111753edafec5790680c':
         pass
+        if "iterator" in session.keys():
+            i = session["iterator"]
+        else:
+            session["iterator"] = 0
     else:
         return redirect(url_for('generator.my_packs'))
 
     # pack_title = session["title"]
     pack = Pack.query.filter_by(title=packtitle, user=current_user.id).first()
     smartforms = pickle.loads(pack.smartforms)
-    try:
-        i = session["iterator"]
-    except KeyError:
-        session["iterator"] = 0
-        i = session["iterator"] 
+    i = session["iterator"]
     sf = smartforms[i]
     pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
 
