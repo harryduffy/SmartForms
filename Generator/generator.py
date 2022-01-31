@@ -349,10 +349,29 @@ def pack_document_generation():
 
     pack_title = session["title"]
     pack = Pack.query.filter_by(title=pack_title, user=current_user.id).first()
-
     smartforms = pickle.loads(pack.smartforms)
-    
-    for i in smartforms:
-        print(i.title)
 
-    return redirect(url_for(""))
+    i = 0
+    while True:
+        
+        if i == len(smartforms):
+            i = 0
+            break
+        sf = smartforms[i]
+        pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).all()
+        i += 1
+        break
+
+    if request.method == "POST":
+
+        rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(pdf.content))
+        smartform_name = sf.title
+        pdf = makepdf(rendered)
+        response = make_response(pdf)
+        response.headers["Content-Type"] = "flask_application/pdf"
+        response.headers["Content-Disposition"] = f"attachment; filename={smartform_name}.pdf"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+
+        return response
+
+    return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content))
