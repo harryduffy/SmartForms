@@ -399,7 +399,7 @@ def sharing_forms(type_of):
         token = serialiser.dumps({'user_id': current_user.id, 'title': session["pack-title"], 'type': type_of}).decode('utf-8')
     else:
         token = serialiser.dumps({'user_id': current_user.id, 'title': session["sf-title"], 'type': type_of}).decode('utf-8')
-    one_time_link = f"http://127.0.0.1:5000/generator/shared_resource/" + token
+    one_time_link = f"https://smartforms-app.herokuapp.com/generator/shared_resource/" + token
     body = f'''<p>Here is the one time link to access the document forms: <a href="{one_time_link}">link</a></p>'''
 
     if request.method == "POST":
