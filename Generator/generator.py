@@ -195,9 +195,8 @@ def sf_form():
 
         if request.form["action"] == "Generate PDF":
             smartform_name = session["sf-title"]
-
             pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
-
+            
             form_data = list(request.form.values())
             form_data.remove("Generate PDF")
             
@@ -245,6 +244,8 @@ def preview():
     except AttributeError:
         user_id = session['user_id']
         pdf = PDF.query.filter_by(title=smartform_name, user=user_id).first()
+    
+    
     updated_content = session["updated-content"]
 
     if request.method == "POST":
@@ -258,6 +259,8 @@ def preview():
                 raise CSRFTokenMissingException('The CSRF Token is missing.')
 
         updated_content = replace_table(updated_content, form_dict)
+        print(updated_content)
+
 
         rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(updated_content))
         
@@ -268,6 +271,8 @@ def preview():
         response.headers["X-Frame-Options"] = "SAMEORIGIN"
 
         return response
+
+    
 
     return render_template("preview.html", title=Markup(pdf.title), content=Markup(updated_content))
 
