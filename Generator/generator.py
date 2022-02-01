@@ -255,7 +255,7 @@ def preview():
 
         updated_content = replace_table(updated_content, form_dict)
 
-        rendered = render_template(f"pdf_formed.html", title=Markup(session["pdf-title"]), content=Markup(updated_content))
+        rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(updated_content))
         
         pdf = makepdf(rendered)
         response = make_response(pdf)
@@ -265,7 +265,7 @@ def preview():
 
         return response
 
-    return render_template("preview.html", title=Markup(session["pdf-title"]), content=Markup(updated_content))
+    return render_template("preview.html", title=Markup(pdf.title), content=Markup(updated_content))
 
 @generator_blueprint.route("/my_smartforms", methods=["POST", "GET"])
 @login_required
