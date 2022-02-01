@@ -451,8 +451,7 @@ def shared_resource(token):
     else:
 
         sf = SmartForm.query.filter_by(title=title, user=current_user.id).first()
-
-        print(sf.content)
+        session['sf-title'] = sf.title
 
         if request.method == "POST":
 
