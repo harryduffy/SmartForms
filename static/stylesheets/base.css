@@ -279,3 +279,13 @@ button:hover {
 #pack-name {
     width: 100px;
 }
+
+#tutorial-box {
+    padding: 50px;
+    padding-left: 70px;
+}
+
+#tutorial-box p {
+    font-size: 20px;
+    line-height: 1.5;
+}

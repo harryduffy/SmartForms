@@ -14,6 +14,11 @@ def index():
 
     return render_template("index.html")
 
+@arterial_blueprint.route("/tutorial", methods=["POST", "GET"])
+def tutorial():
+
+    return render_template("tutorial.html")
+
 @arterial_blueprint.route("/login", methods=["POST", "GET"])
 def login():
 
