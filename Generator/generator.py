@@ -415,16 +415,17 @@ def shared_resource(token):
     data = serialiser.loads(token)
     title = data['title']
     type_of = data['type']
+    user_id = data['user_id']
 
     if type_of == "pack_document_generation":
-        pack = Pack.query.filter_by(title=title, user=current_user.id).first()
+        pack = Pack.query.filter_by(title=title, user=user_id).first()
         smartforms = pickle.loads(pack.smartforms)
 
         if "iterator" not in session:
             session["iterator"] = 0
         
         sf = smartforms[session["iterator"]]
-        pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
+        pdf = PDF.query.filter_by(title=sf.title, user=user_id).first()
 
         if request.method == "POST":
 
@@ -434,7 +435,7 @@ def shared_resource(token):
                 else:
                     session["iterator"] = session["iterator"] + 1
                 sf = smartforms[session["iterator"]]
-                pdf = PDF.query.filter_by(title=sf.title, user=current_user.id).first()
+                pdf = PDF.query.filter_by(title=sf.title, user=user_id).first()
                 return render_template("smartform_requested.html", title=Markup(sf.title), content=Markup(sf.content), pack_form=True)
             else:
                 rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(pdf.content))
@@ -450,14 +451,14 @@ def shared_resource(token):
     
     else:
 
-        sf = SmartForm.query.filter_by(title=title, user=current_user.id).first()
+        sf = SmartForm.query.filter_by(title=title, user=user_id).first()
         session['sf-title'] = sf.title
 
         if request.method == "POST":
 
             if request.form["action"] == "Generate PDF":
 
-                pdf = PDF.query.filter_by(title=title, user=current_user.id).first()
+                pdf = PDF.query.filter_by(title=title, user=user_id).first()
 
                 form_data = list(request.form.values())
                 form_data.remove("Generate PDF")
