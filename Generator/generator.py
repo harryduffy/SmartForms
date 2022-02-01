@@ -240,7 +240,11 @@ def sf_form():
 def preview():
 
     smartform_name = session["sf-title"]
-    pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+    try:
+        pdf = PDF.query.filter_by(title=smartform_name, user=current_user.id).first()
+    except AttributeError:
+        user_id = session['user_id']
+        pdf = PDF.query.filter_by(title=smartform_name, user=user_id).first()
     updated_content = session["updated-content"]
 
     if request.method == "POST":
@@ -416,6 +420,7 @@ def shared_resource(token):
     title = data['title']
     type_of = data['type']
     user_id = data['user_id']
+    session['user_id'] = user_id
 
     if type_of == "pack_document_generation":
         pack = Pack.query.filter_by(title=title, user=user_id).first()
