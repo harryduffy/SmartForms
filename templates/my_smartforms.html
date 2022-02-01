@@ -27,7 +27,14 @@
                     <input type="hidden" name="csrf_token" id="my-smartforms-csrf" value="{{ csrf_token() }}"/>
                     <h2 style="text-align: center; padding-bottom: 30px;">Enter SmartForm Name</h2>
                     <div class="center">
-                        <input type="text" name="smartform-name" id="smartform-name-input" maxlength="250" placeholder="Enter SmartForm name...">
+                        <input type="text" list="smartforms" name="smartform-name" id="smartform-name-input" maxlength="250" placeholder="Enter SmartForm name...">
+                        
+                        
+                        <datalist id="smartforms">
+                            {% for sf in smartforms %}
+                                <option value="{{sf.title}}">
+                            {% endfor %}
+                        </datalist>
                     </div>
                     <br>
                     <br>

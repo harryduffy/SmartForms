@@ -259,8 +259,6 @@ def preview():
                 raise CSRFTokenMissingException('The CSRF Token is missing.')
 
         updated_content = replace_table(updated_content, form_dict)
-        print(updated_content)
-
 
         rendered = render_template(f"pdf_formed.html", title=Markup(pdf.title), content=Markup(updated_content))
         
@@ -295,7 +293,9 @@ def my_smartforms():
 
         return redirect(url_for("generator.sf_form", token=session["url-access-token"]))
 
-    return render_template("my_smartforms.html")
+    smartforms = SmartForm.query.filter_by(user=current_user.id).all()
+
+    return render_template("my_smartforms.html", smartforms=smartforms)
 
 @generator_blueprint.route("/my_packs", methods=["POST", "GET"])
 @login_required
